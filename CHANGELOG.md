@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="5.2.1"></a>
+## [5.2.1](https://github.com/ng-packagr/ng-packagr/compare/v5.2.0...v5.2.1) (2019-05-24)
+
+
+### Bug Fixes
+
+* update terser to version ^4.0.0 ([dd28818](https://github.com/ng-packagr/ng-packagr/commit/dd28818))
+
+
+
 # [5.2.0](https://github.com/ng-packagr/ng-packagr/compare/v5.1.0...v5.2.0) (2019-05-17)
 
 
