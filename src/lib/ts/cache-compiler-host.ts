@@ -1,13 +1,11 @@
+import * as ts from 'typescript';
 import * as ng from '@angular/compiler-cli';
 import * as path from 'path';
-import * as ts from 'typescript';
-import { BuildGraph } from '../brocc/build-graph';
-import { Node } from '../brocc/node';
-import { FileCache } from '../file/file-cache';
+import { ensureUnixPath } from '../util/path';
 import { pugProcessor } from '../ng-v5/entry-point/resources/pug-processor';
 import { StylesheetProcessor } from '../ng-v5/entry-point/resources/stylesheet-processor';
 import { EntryPointNode, fileUrl } from '../ng-v5/nodes';
-import { ensureUnixPath } from '../util/path';
+import { Node } from '../brocc/node';
 
 export function cacheCompilerHost(
   graph: BuildGraph,
