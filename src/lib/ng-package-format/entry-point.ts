@@ -2,6 +2,7 @@ import * as path from 'path';
 import { SchemaClass } from '@ngtools/json-schema';
 import { NgPackageConfig } from '../../ng-package.schema';
 import { DirectoryPath, SourceFilePath, CssUrl, DestinationFiles } from './shared';
+
 /**
  * An entry point - quoting Angular Package Format - is:
  *
@@ -115,7 +116,7 @@ export class NgEntryPoint {
   public get styleIncludePaths(): string[] {
     const includePaths = this.$get('lib.styleIncludePaths') || [];
     return includePaths.map(
-      includePath => path.isAbsolute(includePath) ? includePath : path.resolve(this.basePath, includePath)
+      (includePath => path.isAbsolute(includePath) ? includePath : path.resolve(this.basePath, includePath))
     );
   }
 
