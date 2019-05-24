@@ -6,6 +6,8 @@ import { pugProcessor } from '../ng-v5/entry-point/resources/pug-processor';
 import { StylesheetProcessor } from '../ng-v5/entry-point/resources/stylesheet-processor';
 import { EntryPointNode, fileUrl } from '../ng-v5/nodes';
 import { Node } from '../brocc/node';
+import { BuildGraph } from '../brocc/build-graph';
+import { FileCache } from '../file/file-cache';
 
 export function cacheCompilerHost(
   graph: BuildGraph,
