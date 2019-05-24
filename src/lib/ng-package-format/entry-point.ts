@@ -116,7 +116,7 @@ export class NgEntryPoint {
   public get styleIncludePaths(): string[] {
     const includePaths = this.$get('lib.styleIncludePaths') || [];
     return includePaths.map(
-      (includePath => path.isAbsolute(includePath) ? includePath : path.resolve(this.basePath, includePath))
+      includePath => (path.isAbsolute(includePath) ? includePath : path.resolve(this.basePath, includePath))
     );
   }
 
