@@ -1,6 +1,6 @@
 {
   "name": "@crexi-dev/ng-packagr",
-  "version": "5.2.6",
+  "version": "5.2.7",
   "description": "Compile and package a TypeScript library to Angular Package Format",
   "keywords": [
     "angular",
@@ -21,7 +21,6 @@
   "bugs": {
     "url": "https://github.com/ng-packagr/ng-packagr/issues"
   },
-  "bin": "./cli/main.js",
   "main": "./public_api.js",
   "typings": "./public_api.d.ts",
   "dependencies": {
