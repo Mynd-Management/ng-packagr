@@ -1,6 +1,6 @@
 {
   "name": "@crexi-dev/ng-packagr",
-  "version": "5.2.7",
+  "version": "5.2.8",
   "description": "Compile and package a TypeScript library to Angular Package Format",
   "keywords": [
     "angular",
