@@ -13,14 +13,14 @@ import postcssClean from './postcss-clean';
 import * as stylus from 'stylus';
 
 /*
-  * Please be aware of the few differences in behaviour https://github.com/sass/dart-sass/blob/master/README.md#behavioral-differences-from-ruby-sass
-  * By default `npm install` will install sass.
-  * To use node-sass you need to use:
-  *   Npm:
-  *     `npm install node-sass --save-dev`
-  *   Yarn:
-  *     `yarn add node-sass --dev`
-  */
+ * Please be aware of the few differences in behaviour https://github.com/sass/dart-sass/blob/master/README.md#behavioral-differences-from-ruby-sass
+ * By default `npm install` will install sass.
+ * To use node-sass you need to use:
+ *   Npm:
+ *     `npm install node-sass --save-dev`
+ *   Yarn:
+ *     `yarn add node-sass --dev`
+ */
 let sassComplier: any | undefined;
 try {
   sassComplier = require('node-sass'); // Check if node-sass is explicitly included.
@@ -71,9 +71,9 @@ export class StylesheetProcessor {
 
       case '.less':
         // this is the only way I found to make LESS sync
-        let cmd = `node "${require.resolve('less/bin/lessc')}" "${filePath}" --less-plugin-npm-import="prefix=~"`;
+        let cmd = `node "${require.resolve('less/bin/lessc')}" "${filePath}" --less-plugin-npm-import="prefix=~" --js`;
         if (this.styleIncludePaths.length) {
-          cmd += ` --include-path=${this.styleIncludePaths.join(':')}`;
+          cmd += ` --include-path="${this.styleIncludePaths.join(':')}"`;
         }
 
         return execSync(cmd).toString();
@@ -100,7 +100,7 @@ export class StylesheetProcessor {
 
   private createPostCssProcessor(basePath: string, cssUrl?: CssUrl): postcss.Processor {
     log.debug(`determine browserslist for ${basePath}`);
-    const browsers = browserslist(undefined, { path: basePath });
+    const overrideBrowserslist = browserslist(undefined, { path: basePath });
 
     const postCssPlugins = [];
 
@@ -111,7 +111,7 @@ export class StylesheetProcessor {
 
     // this is important to be executed post running `postcssUrl`
     postCssPlugins.push(
-      autoprefixer({ browsers, grid: true }),
+      autoprefixer({ overrideBrowserslist, grid: true }),
       postcssClean({
         level: {
           2: {

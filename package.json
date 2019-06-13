@@ -1,6 +1,6 @@
 {
   "name": "@crexi-dev/ng-packagr",
-  "version": "5.2.10",
+  "version": "5.3.0",
   "description": "Compile and package a TypeScript library to Angular Package Format",
   "keywords": [
     "angular",
@@ -28,7 +28,7 @@
   "typings": "./public_api.d.ts",
   "dependencies": {
     "@ngtools/json-schema": "^1.1.0",
-    "autoprefixer": "^9.0.0",
+    "autoprefixer": "^9.6.0",
     "browserslist": "^4.0.0",
     "chalk": "^2.3.1",
     "chokidar": "^3.0.0",
@@ -40,7 +40,6 @@
     "less": "^3.8.0",
     "less-plugin-npm-import": "^2.1.0",
     "node-sass-tilde-importer": "^1.0.0",
-    "opencollective-postinstall": "^2.0.1",
     "postcss": "^7.0.0",
     "postcss-url": "^8.0.0",
     "pug": "^2.0.3",
@@ -58,23 +57,22 @@
     "update-notifier": "^3.0.0"
   },
   "peerDependencies": {
-    "@angular/compiler": "^6.0.0 || ^7.0.0 || ^8.0.0-beta.0",
-    "@angular/compiler-cli": "^6.0.0 || ^7.0.0 || ^8.0.0-beta.0",
+    "@angular/compiler": "^6.0.0 || ^7.0.0 || ^8.0.0-beta.0 || ^8.1.0-beta.0",
+    "@angular/compiler-cli": "^6.0.0 || ^7.0.0 || ^8.0.0-beta.0 || ^8.1.0-beta.0",
     "tslib": "^1.9.0",
     "typescript": ">=2.7 < 3.5"
   },
   "devDependencies": {
-    "@angular/cdk": "~7.2.0-rc.0",
-    "@angular/common": "~7.2.0-rc.0",
-    "@angular/compiler": "~7.2.0-rc.0",
-    "@angular/compiler-cli": "~7.2.0-rc.0",
-    "@angular/core": "~7.2.0-rc.0",
-    "@angular/http": "~7.2.0-rc.0",
-    "@angular/material": "^7.3.5",
-    "@angular/platform-browser": "~7.2.0-rc.0",
-    "@angular/router": "~7.2.0-rc.0",
-    "@commitlint/cli": "^7.0.0",
-    "@commitlint/config-angular": "^7.0.0",
+    "@angular/cdk": "~8.0.0-rc.0",
+    "@angular/common": "~8.0.0-rc.0",
+    "@angular/compiler": "~8.0.0-rc.0",
+    "@angular/compiler-cli": "~8.0.0-rc.0",
+    "@angular/core": "~8.0.0-rc.0",
+    "@angular/material": "^8.0.0",
+    "@angular/platform-browser": "~8.0.0-rc.0",
+    "@angular/router": "~8.0.0-rc.0",
+    "@commitlint/cli": "^8.0.0",
+    "@commitlint/config-angular": "^8.0.0",
     "@types/acorn": "^4.0.3",
     "@types/chai": "^4.0.0",
     "@types/chokidar": "^1.7.5",
@@ -96,7 +94,7 @@
     "cpx": "^1.5.0",
     "cross-env": "^5.0.5",
     "gh-pages": "^2.0.0",
-    "husky": "^1.0.0",
+    "husky": "^2.0.0",
     "jasmine": "^3.0.0",
     "json-schema-to-typescript": "^6.0.0",
     "mocha": "^6.0.0",
@@ -107,11 +105,11 @@
     "rxjs-compat": "^6.0.0",
     "sinon": "^7.0.0",
     "source-map": "^0.7.0",
-    "standard-version": "^5.0.0",
+    "standard-version": "^6.0.0",
     "ts-node": "^8.0.0",
     "tsickle": "^0.35.0",
     "tslib": "^1.9.0",
-    "typescript": "~3.2.2",
+    "typescript": "~3.4.5",
     "zone.js": "^0.9.0"
   },
   "scripts": {
@@ -131,8 +129,7 @@
     "integration:watch:specs": "cross-env TS_NODE_PROJECT=integration/tsconfig.specs.json mocha --timeout 25000 --require ts-node/register \"integration/watch/*.spec.ts\"",
     "test:specs": "cross-env TS_NODE_PROJECT=src/tsconfig.specs.json mocha --require ts-node/register \"src/**/*.spec.ts\"",
     "test": "yarn build && yarn test:specs && yarn integration:samples && yarn integration:specs && yarn integration:watch:specs && yarn integration:consumers",
-    "gh-pages": "gh-pages -d docs/ghpages",
-    "postinstall": "opencollective-postinstall"
+    "gh-pages": "gh-pages -d docs/ghpages"
   },
   "collective": {
     "type": "opencollective",

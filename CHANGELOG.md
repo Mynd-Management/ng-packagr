@@ -1,59 +1,20 @@
-# Change Log
+# Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-<a name="5.2.10"></a>
-## [5.2.10](https://github.com/ng-packagr/ng-packagr/compare/v5.2.8...v5.2.10) (2019-05-24)
-
-
-
-<a name="5.2.8"></a>
-## [5.2.8](https://github.com/ng-packagr/ng-packagr/compare/v5.2.7...v5.2.8) (2019-05-24)
-
-
-
-<a name="5.2.6"></a>
-## [5.2.6](https://github.com/ng-packagr/ng-packagr/compare/v5.2.7...v5.2.6) (2019-05-24)
-
-
-
-<a name="5.2.7"></a>
-## [5.2.7](https://github.com/ng-packagr/ng-packagr/compare/v5.2.6...v5.2.7) (2019-05-24)
-
-
-
-<a name="5.2.6"></a>
-## [5.2.6](https://github.com/ng-packagr/ng-packagr/compare/v5.2.5...v5.2.6) (2019-05-24)
-
-
-
-<a name="5.2.5"></a>
-## [5.2.5](https://github.com/ng-packagr/ng-packagr/compare/v5.2.4...v5.2.5) (2019-05-24)
-
-
-
-<a name="5.2.4"></a>
-## [5.2.4](https://github.com/ng-packagr/ng-packagr/compare/v5.2.3...v5.2.4) (2019-05-24)
-
-
-
-<a name="5.2.3"></a>
-## [5.2.3](https://github.com/ng-packagr/ng-packagr/compare/v5.2.2...v5.2.3) (2019-05-24)
-
-
-
-<a name="5.2.2"></a>
-## [5.2.2](https://github.com/ng-packagr/ng-packagr/compare/v5.2.1...v5.2.2) (2019-05-24)
-
-
-
-<a name="5.2.1"></a>
-## [5.2.1](https://github.com/ng-packagr/ng-packagr/compare/v5.2.0...v5.2.1) (2019-05-24)
+## [5.3.0](https://github.com/ng-packagr/ng-packagr/compare/v5.2.0...v5.3.0) (2019-06-05)
 
 
 ### Bug Fixes
 
+* add quotes to less include-path ([af6816b](https://github.com/ng-packagr/ng-packagr/commit/af6816b))
+* don't write stacktraces when there are errors ([42692b0](https://github.com/ng-packagr/ng-packagr/commit/42692b0))
+* remove opencollective postinstall scripts ([123f39a](https://github.com/ng-packagr/ng-packagr/commit/123f39a))
 * update terser to version ^4.0.0 ([dd28818](https://github.com/ng-packagr/ng-packagr/commit/dd28818))
+
+### Features
+
+* support inline javascript in less ([#1300](https://github.com/ng-packagr/ng-packagr/issues/1300)) ([e0b4136](https://github.com/ng-packagr/ng-packagr/commit/e0b4136)), closes [#1298](https://github.com/ng-packagr/ng-packagr/issues/1298)
 
 
 
@@ -602,8 +563,8 @@ Removes several deprecated code items.
   - removed tarball generation ([#721](https://github.com/dherges/ng-packagr/issues/721))
 
 There were some important changes, mainly related to `rollup`, most of the options and functionality provided by `rollup` plugins (comments & license) have been removed, due to the fact this is not inline with APF V6 as one will end up with different outputs in different modules.
-  - **`comments` option has been removed** 
-  - **`licensePath` option has been removed** 
+  - **`comments` option has been removed**
+  - **`licensePath` option has been removed**
 
 In APF V6, it is recommanded to not embed dependencies due to the fact that it will end up having multiple copies of the same library in a single application.
 
@@ -611,7 +572,7 @@ In APF V6, it is recommanded to not embed dependencies due to the fact that it w
 
 More info in the APF v6 spec: https://docs.google.com/document/d/1CZC2rcpxffTDfRDs6p1cfbmKNLA6x5O-NtkJglDaBVs/preview
 
-Documentation on npm bundled dependencies: http://npm.github.io/using-pkgs-docs/package-json/types/bundleddependencies.html 
+Documentation on npm bundled dependencies: http://npm.github.io/using-pkgs-docs/package-json/types/bundleddependencies.html
 
 #### Tarball generation
 
