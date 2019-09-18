@@ -1,44 +1,50 @@
 import * as ng from '@angular/compiler-cli';
 import * as ts from 'typescript';
 import * as log from '../util/log';
-import { createEmitCallback } from './create-emit-callback';
 import { redirectWriteFileCompilerHost } from '../ts/redirect-write-file-compiler-host';
 import { cacheCompilerHost } from '../ts/cache-compiler-host';
 import { StylesheetProcessor } from '../ng-v5/entry-point/resources/stylesheet-processor';
 import { BuildGraph } from '../brocc/build-graph';
-import { EntryPointNode } from '../ng-v5/nodes';
+import { EntryPointNode, isEntryPointInProgress } from '../ng-v5/nodes';
+import { NgccProcessor } from './ngcc-processor';
+import { ngccTransformCompilerHost } from '../ts/ngcc-transform-compiler-host';
+import { createEmitCallback } from './create-emit-callback';
+import { downlevelConstructorParameters } from '../ts/ctor-parameters';
 
 export async function compileSourceFiles(
   graph: BuildGraph,
-  entryPoint: EntryPointNode,
   tsConfig: ng.ParsedConfiguration,
   moduleResolutionCache: ts.ModuleResolutionCache,
   stylesheetProcessor: StylesheetProcessor,
   extraOptions?: Partial<ng.CompilerOptions>,
-  declarationDir?: string
+  declarationDir?: string,
+  ngccProcessor?: NgccProcessor,
 ) {
   log.debug(`ngc (v${ng.VERSION.full})`);
 
   const tsConfigOptions: ng.CompilerOptions = { ...tsConfig.options, ...extraOptions };
+  const entryPoint = graph.find(isEntryPointInProgress()) as EntryPointNode;
 
   let tsCompilerHost = cacheCompilerHost(
     graph,
     entryPoint,
     tsConfigOptions,
     moduleResolutionCache,
-    stylesheetProcessor
+    stylesheetProcessor,
   );
   if (declarationDir) {
     tsCompilerHost = redirectWriteFileCompilerHost(tsCompilerHost, tsConfigOptions.basePath, declarationDir);
   }
 
+  if (tsConfigOptions.enableIvy && ngccProcessor) {
+    tsCompilerHost = ngccTransformCompilerHost(tsCompilerHost, tsConfigOptions, ngccProcessor, moduleResolutionCache);
+  }
+
   // ng.CompilerHost
   const ngCompilerHost = ng.createCompilerHost({
     options: tsConfigOptions,
-    tsHost: tsCompilerHost
+    tsHost: tsCompilerHost,
   });
-
-  const emitFlags = tsConfigOptions.declaration ? tsConfig.emitFlags : ng.EmitFlags.JS;
 
   const scriptTarget = tsConfigOptions.target;
   const cache = entryPoint.cache;
@@ -48,7 +54,7 @@ export async function compileSourceFiles(
     rootNames: tsConfig.rootNames,
     options: tsConfigOptions,
     host: ngCompilerHost,
-    oldProgram
+    oldProgram,
   });
 
   await ngProgram.loadNgStructureAsync();
@@ -56,7 +62,7 @@ export async function compileSourceFiles(
   log.debug(
     `ngc program structure is reused: ${
       oldProgram ? (oldProgram.getTsProgram() as any).structureIsReused : 'No old program'
-    }`
+    }`,
   );
 
   cache.oldPrograms = { ...cache.oldPrograms, [scriptTarget]: ngProgram };
@@ -67,16 +73,21 @@ export async function compileSourceFiles(
     ...ngProgram.getTsSyntacticDiagnostics(),
     ...ngProgram.getTsSemanticDiagnostics(),
     ...ngProgram.getNgSemanticDiagnostics(),
-    ...ngProgram.getNgStructuralDiagnostics()
+    ...ngProgram.getNgStructuralDiagnostics(),
   ];
 
   // if we have an error we don't want to transpile.
   const hasError = ng.exitCodeFromResult(allDiagnostics) > 0;
   if (!hasError) {
+    const emitFlags = tsConfigOptions.declaration ? tsConfig.emitFlags : ng.EmitFlags.JS;
     // certain errors are only emitted by a compilation hence append to previous diagnostics
     const { diagnostics } = ngProgram.emit({
-      emitCallback: createEmitCallback(tsConfigOptions),
-      emitFlags
+      emitFlags,
+      // For Ivy we don't need a custom emitCallback to have tsickle transforms
+      emitCallback: tsConfigOptions.enableIvy ? undefined : createEmitCallback(tsConfigOptions),
+      customTransformers: {
+        beforeTs: [downlevelConstructorParameters(() => ngProgram.getTsProgram().getTypeChecker())],
+      },
     });
 
     allDiagnostics.push(...diagnostics);

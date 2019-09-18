@@ -20,7 +20,7 @@ export const writePackageTransform: Transform = transformFromPromise(async graph
   log.info('Copying declaration files');
   // we don't want to copy `dist` and 'node_modules' declaration files but only files in source
   const declarationFiles = await globFiles(`${path.dirname(ngEntryPoint.entryFilePath)}/**/*.d.ts`, {
-    ignore: ['**/node_modules/**', `${ngPackage.dest}/**`]
+    ignore: ['**/node_modules/**', `${ngPackage.dest}/**`],
   });
 
   if (declarationFiles.length) {
@@ -29,7 +29,7 @@ export const writePackageTransform: Transform = transformFromPromise(async graph
         const relativePath = path.relative(ngEntryPoint.entryFilePath, value);
         const destination = path.resolve(destinationFiles.declarations, relativePath);
         return copyFile(value, destination);
-      })
+      }),
     );
   }
 
@@ -38,20 +38,27 @@ export const writePackageTransform: Transform = transformFromPromise(async graph
   const relativeUnixFromDestPath = (filePath: string) =>
     ensureUnixPath(path.relative(ngEntryPoint.destinationPath, filePath));
 
-  await writePackageJson(ngEntryPoint, ngPackage, {
-    main: relativeUnixFromDestPath(destinationFiles.umd),
-    module: relativeUnixFromDestPath(destinationFiles.fesm5),
-    es2015: relativeUnixFromDestPath(destinationFiles.fesm2015),
-    esm5: relativeUnixFromDestPath(destinationFiles.esm5),
-    esm2015: relativeUnixFromDestPath(destinationFiles.esm2015),
-    fesm5: relativeUnixFromDestPath(destinationFiles.fesm5),
-    fesm2015: relativeUnixFromDestPath(destinationFiles.fesm2015),
-    typings: relativeUnixFromDestPath(destinationFiles.declarations),
-    // XX 'metadata' property in 'package.json' is non-standard. Keep it anyway?
-    metadata: relativeUnixFromDestPath(destinationFiles.metadata),
-    // webpack v4+ specific flag to enable advanced optimizations and code splitting
-    sideEffects: ngEntryPoint.sideEffects
-  });
+  const isIvy = !!entryPoint.data.tsConfig.options.enableIvy;
+
+  await writePackageJson(
+    ngEntryPoint,
+    ngPackage,
+    {
+      main: relativeUnixFromDestPath(destinationFiles.umd),
+      module: relativeUnixFromDestPath(destinationFiles.fesm5),
+      es2015: relativeUnixFromDestPath(destinationFiles.fesm2015),
+      esm5: relativeUnixFromDestPath(destinationFiles.esm5),
+      esm2015: relativeUnixFromDestPath(destinationFiles.esm2015),
+      fesm5: relativeUnixFromDestPath(destinationFiles.fesm5),
+      fesm2015: relativeUnixFromDestPath(destinationFiles.fesm2015),
+      typings: relativeUnixFromDestPath(destinationFiles.declarations),
+      // Ivy doesn't generate metadata files
+      metadata: isIvy ? undefined : relativeUnixFromDestPath(destinationFiles.metadata),
+      // webpack v4+ specific flag to enable advanced optimizations and code splitting
+      sideEffects: ngEntryPoint.sideEffects,
+    },
+    isIvy,
+  );
 
   log.success(`Built ${ngEntryPoint.moduleId}`);
 
@@ -73,10 +80,11 @@ export const writePackageTransform: Transform = transformFromPromise(async graph
  * @param entryPoint An entry point of an Angular package / library
  * @param additionalProperties Additional properties, e.g. binary artefacts (bundle files), to merge into `package.json`
  */
-export async function writePackageJson(
+async function writePackageJson(
   entryPoint: NgEntryPoint,
   pkg: NgPackage,
-  additionalProperties: { [key: string]: string | boolean | string[] }
+  additionalProperties: { [key: string]: string | boolean | string[] },
+  isIvy: boolean,
 ): Promise<void> {
   log.debug('Writing package.json');
 
@@ -94,7 +102,7 @@ export async function writePackageJson(
     if (tsLibVersion) {
       packageJson.dependencies = {
         ...packageJson.dependencies,
-        tslib: tsLibVersion
+        tslib: tsLibVersion,
       };
     }
   }
@@ -116,9 +124,19 @@ export async function writePackageJson(
       delete packageJson.scripts;
     } else {
       log.warn(
-        `You enabled keepLifecycleScripts explicitly. The scripts section in package.json will be published to npm.`
+        `You enabled keepLifecycleScripts explicitly. The scripts section in package.json will be published to npm.`,
       );
     }
+  }
+
+  if (isIvy && !entryPoint.isSecondaryEntryPoint) {
+    const scripts = packageJson.scripts || (packageJson.scripts = {});
+    scripts.prepublishOnly =
+      'node --eval "console.error(\'' +
+      'ERROR: Trying to publish a package that has been compiled by Ivy. This is not allowed.\\n' +
+      'Please delete and rebuild the package, without compiling with Ivy, before attempting to publish.\\n' +
+      '\')" ' +
+      '&& exit 1';
   }
 
   // keep the dist package.json clean
@@ -128,7 +146,9 @@ export async function writePackageJson(
 
   // `outputJson()` creates intermediate directories, if they do not exist
   // -- https://github.com/jprichardson/node-fs-extra/blob/master/docs/outputJson.md
-  await fs.outputJson(path.join(entryPoint.destinationPath, 'package.json'), packageJson, { spaces: 2 });
+  await fs.outputJson(path.join(entryPoint.destinationPath, 'package.json'), packageJson, {
+    spaces: 2,
+  });
 }
 
 function checkNonPeerDependencies(packageJson: { [key: string]: any }, property: string, whitelist: RegExp[]) {
@@ -138,7 +158,7 @@ function checkNonPeerDependencies(packageJson: { [key: string]: any }, property:
         log.debug(`Dependency ${dep} is whitelisted in '${property}'`);
       } else {
         log.warn(
-          `Distributing npm packages with '${property}' is not recommended. Please consider adding ${dep} to 'peerDependencies' or remove it from '${property}'.`
+          `Distributing npm packages with '${property}' is not recommended. Please consider adding ${dep} to 'peerDependencies' or remove it from '${property}'.`,
         );
         throw new Error(`Dependency ${dep} must be explicitly whitelisted.`);
       }

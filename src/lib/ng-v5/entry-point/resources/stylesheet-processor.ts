@@ -42,7 +42,7 @@ export class StylesheetProcessor {
     // Render postcss (autoprefixing and friends)
     const result = this.postCssProcessor.process(renderedCss, {
       from: filePath,
-      to: filePath.replace(path.extname(filePath), '.css')
+      to: filePath.replace(path.extname(filePath), '.css'),
     });
 
     // Log warnings from postcss
@@ -65,7 +65,7 @@ export class StylesheetProcessor {
             data: content,
             indentedSyntax: '.sass' === ext,
             importer: nodeSassTildeImporter,
-            includePaths: this.styleIncludePaths
+            includePaths: this.styleIncludePaths,
           })
           .css.toString();
 
@@ -115,10 +115,10 @@ export class StylesheetProcessor {
       postcssClean({
         level: {
           2: {
-            specialComments: false
-          }
-        }
-      })
+            specialComments: false,
+          },
+        },
+      }),
     );
 
     return postcss(postCssPlugins);

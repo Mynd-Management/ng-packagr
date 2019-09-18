@@ -1,5 +1,6 @@
 {
   "angularCompilerOptions": {
+    "enableIvy": false,
     "annotateForClosureCompiler": false,
     "skipTemplateCodegen": true,
     "strictMetadataEmit": true,
@@ -21,7 +22,7 @@
     "inlineSourceMap": true,
     "inlineSources": true,
     "skipLibCheck": true,
-    "emitDecoratorMetadata": true,
+    "emitDecoratorMetadata": false,
     "experimentalDecorators": true,
     "importHelpers": true,
     "lib": ["dom", "es2015"]

@@ -20,12 +20,12 @@ program
     '-p, --project [path]',
     "Path to the 'ng-package.json' or 'package.json' file.",
     parseProjectPath,
-    DEFAULT_PROJECT_PATH
+    DEFAULT_PROJECT_PATH,
   )
   .option(
     '-c, --config [config]',
     'Path to a tsconfig file.',
-    (value: string | undefined) => (value ? path.resolve(value) : undefined)
+    (value: string | undefined) => (value ? path.resolve(value) : undefined),
   );
 
 const dir = path.dirname(module.filename);

@@ -24,7 +24,7 @@ export type Groups = Token[][];
  *
  * Here, foobar has depth 0, bar has depth 1, and foo has depth 2.
  *
- * @link https://github.com/dherges/ng-packagr/pull/419#issuecomment-354015908
+ * @link https://github.com/ng-packagr/ng-packagr/pull/419#issuecomment-354015908
  */
 export class DepthBuilder {
   // this serves as a tracker for dependencies between tokens
@@ -55,7 +55,10 @@ export class DepthBuilder {
   }
 
   public build(): Groups {
-    const allNodes = Array.from(this.dependencyMap.entries()).map(([token, dependencies]) => ({ token, dependencies }));
+    const allNodes = Array.from(this.dependencyMap.entries()).map(([token, dependencies]) => ({
+      token,
+      dependencies,
+    }));
     // Start with root nodes and expand from there
     const nodeQueue = allNodes.filter(node => node.dependencies.length === 0);
 

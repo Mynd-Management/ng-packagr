@@ -1,13 +1,13 @@
-import * as ts from 'typescript';
 import * as ng from '@angular/compiler-cli';
 import * as path from 'path';
-import { ensureUnixPath } from '../util/path';
+import * as ts from 'typescript';
+import { BuildGraph } from '../brocc/build-graph';
+import { Node } from '../brocc/node';
+import { FileCache } from '../file/file-cache';
 import { pugProcessor } from '../ng-v5/entry-point/resources/pug-processor';
 import { StylesheetProcessor } from '../ng-v5/entry-point/resources/stylesheet-processor';
 import { EntryPointNode, fileUrl } from '../ng-v5/nodes';
-import { Node } from '../brocc/node';
-import { BuildGraph } from '../brocc/build-graph';
-import { FileCache } from '../file/file-cache';
+import { ensureUnixPath } from '../util/path';
 
 export function cacheCompilerHost(
   graph: BuildGraph,
@@ -15,7 +15,7 @@ export function cacheCompilerHost(
   compilerOptions: ng.CompilerOptions,
   moduleResolutionCache: ts.ModuleResolutionCache,
   stylesheetProcessor?: StylesheetProcessor,
-  sourcesFileCache: FileCache = entryPoint.cache.sourcesFileCache
+  sourcesFileCache: FileCache = entryPoint.cache.sourcesFileCache,
 ): ng.CompilerHost {
   const compilerHost = ng.createCompilerHost({ options: compilerOptions });
 
@@ -63,7 +63,7 @@ export function cacheCompilerHost(
       data: string,
       writeByteOrderMark: boolean,
       onError?: (message: string) => void,
-      sourceFiles?: ReadonlyArray<ts.SourceFile>
+      sourceFiles?: ReadonlyArray<ts.SourceFile>,
     ) => {
       if (fileName.endsWith('.d.ts')) {
         sourceFiles.forEach(source => {
@@ -94,7 +94,7 @@ export function cacheCompilerHost(
         ensureUnixPath(containingFile),
         compilerOptions,
         compilerHost,
-        moduleResolutionCache
+        moduleResolutionCache,
       );
 
       return resolvedModule && resolvedModule.resolvedFileName;
@@ -117,13 +117,13 @@ export function cacheCompilerHost(
         cache.content = compilerHost.readFile.call(this, fileName);
         if (/(pug|jade)$/.test(path.extname(fileName))) {
           cache.content = pugProcessor(fileName, cache.content);
-        } else if (!/(html|htm)$/.test(path.extname(fileName))) {
+        } else if (!/(html|htm|svg)$/.test(path.extname(fileName))) {
           cache.content = stylesheetProcessor.process(fileName, cache.content);
         }
         cache.exists = true;
       }
 
       return cache.content;
-    }
+    },
   };
 }

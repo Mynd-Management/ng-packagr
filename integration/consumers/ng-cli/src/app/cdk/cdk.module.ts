@@ -1,8 +1,8 @@
-import { Component, NgModule, Version, InjectionToken } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { VERSION } from '@angular/cdk';
 import { ObserversModule } from '@angular/cdk/observers';
 import { CdkTableModule } from '@angular/cdk/table';
+import { CommonModule } from '@angular/common';
+import { Component, InjectionToken, NgModule, Version } from '@angular/core';
 
 const CDK_VERSION_TOKEN = new InjectionToken<Version>('VERSION_TOKEN');
 
@@ -11,7 +11,7 @@ const CDK_VERSION_TOKEN = new InjectionToken<Version>('VERSION_TOKEN');
   template: `
     <div cdkObserveContent></div>
     <cdk-table></cdk-table>
-  `
+  `,
 })
 export class SomeCdkComponent {}
 
@@ -22,8 +22,8 @@ export class SomeCdkComponent {}
   providers: [
     {
       provide: CDK_VERSION_TOKEN,
-      useValue: VERSION
-    }
-  ]
+      useValue: VERSION,
+    },
+  ],
 })
 export class CdkModule {}
