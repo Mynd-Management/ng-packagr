@@ -16,7 +16,7 @@ import { provideOptions, NgPackagrOptions } from './options.di';
  *
  * See the `docs/transformations.md` for more prose description.
  *
- * @link https://github.com/dherges/ng-packagr/pull/572
+ * @link https://github.com/ng-packagr/ng-packagr/pull/572
  */
 export class NgPackagr {
   private buildTransform: InjectionToken<Transform> = PACKAGE_TRANSFORM.provide;
@@ -120,7 +120,7 @@ export class NgPackagr {
         log.error(err);
         return throwError(err);
       }),
-      map(() => undefined)
+      map(() => undefined),
     );
   }
 }
@@ -129,5 +129,5 @@ export const ngPackagr = (): NgPackagr =>
   new NgPackagr([
     // Add default providers to this list.
     ...PACKAGE_PROVIDERS,
-    ...ENTRY_POINT_PROVIDERS
+    ...ENTRY_POINT_PROVIDERS,
   ]);
