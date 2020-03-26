@@ -1,7 +1,7 @@
 version: 2
 defaults: &defaults
   docker:
-    - image: circleci/node:10.12-browsers
+    - image: circleci/node:10.16-browsers
   working_directory: ~/repo
 
 attach_options: &attach_options
@@ -14,13 +14,15 @@ jobs:
       # Checkout, Download and cache dependencies
       - checkout
       - restore_cache:
-          key: v4-dependencies-{{ checksum "yarn.lock" }}
+          keys:
+            - v5-dependencies-{{ checksum "yarn.lock" }}
+            - v5-dependencies-
       # Install dependencies
       - run: yarn install --frozen-lockfile --non-interactive
       - save_cache:
-          key: v4-dependencies-{{ checksum "yarn.lock" }}
+          key: v5-dependencies-{{ checksum "yarn.lock" }}
           paths:
-            - 'node_modules'
+            - ~/.cache/yarn
       - persist_to_workspace:
           root: ~/repo
           paths: .
@@ -31,24 +33,9 @@ jobs:
       - attach_workspace: *attach_options
       # Build and run tests
       - run: yarn test
-      # Store artefacts on circle
-      - run:
-          name: Collect artefacts
-          command: |
-            mkdir -p /tmp/artefacts \
-              && cp -r --parents integration/samples/**/dist /tmp/artefacts \
-              && cp -r --parents integration/consumers/**/dist /tmp/artefacts
-      - store_artifacts:
-          name: Store artefacts
-          path: /tmp/artefacts/integration
-          destination: integration
-      - store_artifacts:
-          name: Store artefacts
-          path: ~/repo/dist
-          destination: dist
       - persist_to_workspace:
           root: ~/repo
-          paths: .
+          paths: dist
 
   deploy:
     <<: *defaults

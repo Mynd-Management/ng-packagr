@@ -2,6 +2,279 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [9.1.0](https://github.com/ng-packagr/ng-packagr/compare/v9.0.3...v9.1.0) (2020-03-25)
+
+
+### Bug Fixes
+
+* update @angular/common to version ~9.1.0 ([fd8c0a9](https://github.com/ng-packagr/ng-packagr/commit/fd8c0a9))
+* update fs-extra to version ^9.0.0 ([eb2cd7f](https://github.com/ng-packagr/ng-packagr/commit/eb2cd7f))
+* update rollup to version 2.2.0 ([1de8443](https://github.com/ng-packagr/ng-packagr/commit/1de8443))
+
+
+### Features
+
+* add support for TypeScript 3.8 ([4a388af](https://github.com/ng-packagr/ng-packagr/commit/4a388af))
+
+### [9.0.3](https://github.com/ng-packagr/ng-packagr/compare/v9.0.2...v9.0.3) (2020-03-09)
+
+
+### Bug Fixes
+
+* update rollup to version 1.32.0 ([0e414ce](https://github.com/ng-packagr/ng-packagr/commit/0e414ce))
+* update rollup to version 1.32.1 ([9611545](https://github.com/ng-packagr/ng-packagr/commit/9611545))
+* wrong UMD ID's of Angular packages with a dash in name ([c996a61](https://github.com/ng-packagr/ng-packagr/commit/c996a61))
+
+### [9.0.2](https://github.com/ng-packagr/ng-packagr/compare/v9.0.0...v9.0.2) (2020-02-25)
+
+
+### Bug Fixes
+
+* handle union type with a nullable argument ([c9f697f](https://github.com/ng-packagr/ng-packagr/commit/c9f697f))
+* show schema errors ([cdf0e9c](https://github.com/ng-packagr/ng-packagr/commit/cdf0e9c))
+* throw error on circular dependencies ([af1d2f3](https://github.com/ng-packagr/ng-packagr/commit/af1d2f3)), closes [#1551](https://github.com/ng-packagr/ng-packagr/issues/1551)
+* update rollup to version 1.31.1 ([36830f4](https://github.com/ng-packagr/ng-packagr/commit/36830f4))
+
+### [9.0.1](https://github.com/ng-packagr/ng-packagr/compare/v9.0.0...v9.0.1) (2020-02-18)
+
+
+### Bug Fixes
+
+* update rollup to version 1.31.1 ([36830f4](https://github.com/ng-packagr/ng-packagr/commit/36830f4))
+
+## [9.0.0](https://github.com/ng-packagr/ng-packagr/compare/v5.7.0...v9.0.0) (2020-02-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* Remove usage of deprecated `less-plugin-npm-import`. In less v3 is supports node_modules resolutions by default.
+
+Before
+```css
+@import '~module/less/linenumbers';
+```
+
+After
+```css
+@import 'module/less/linenumbers';
+```
+* TypeScript versions prior to 3.6.4 are no longer supported.no longer supported.
+* `tslib` will be longer be added as a `dependencies`, but rather it will be added as a `peerDependencies`.
+
+This is to be inline with the Angular framework as per
+
+### Bug Fixes
+
+*  downlevel constructor parameters transformer with tsickle ([51d5498](https://github.com/ng-packagr/ng-packagr/commit/51d5498)), closes [#1517](https://github.com/ng-packagr/ng-packagr/issues/1517)
+* add `assets` option to schema ([a5efd1c](https://github.com/ng-packagr/ng-packagr/commit/a5efd1c)), closes [#1092](https://github.com/ng-packagr/ng-packagr/issues/1092)
+* add link to Angular guide when showing ivy publish warning ([6bee029](https://github.com/ng-packagr/ng-packagr/commit/6bee029)), closes [#1453](https://github.com/ng-packagr/ng-packagr/issues/1453)
+* add more package json sections to remove ([57cc4d1](https://github.com/ng-packagr/ng-packagr/commit/57cc4d1))
+* analyse only non done entry points ([e8db885](https://github.com/ng-packagr/ng-packagr/commit/e8db885))
+* analyse should cater for module name being the primary entry point ([7b8e491](https://github.com/ng-packagr/ng-packagr/commit/7b8e491))
+* circular dependency on itself error ([702c3f2](https://github.com/ng-packagr/ng-packagr/commit/702c3f2)), closes [#1508](https://github.com/ng-packagr/ng-packagr/issues/1508)
+* ignore `.gitkeep`, `Thumbs.db` and `.DS_Store` when copying files ([a5b10e2](https://github.com/ng-packagr/ng-packagr/commit/a5b10e2))
+* ignore JSON files in tsickle processing ([#1489](https://github.com/ng-packagr/ng-packagr/issues/1489)) ([ec44059](https://github.com/ng-packagr/ng-packagr/commit/ec44059)), closes [#325](https://github.com/ng-packagr/ng-packagr/issues/325)
+* incorrect detection of potential dependent entry-points ([932bf48](https://github.com/ng-packagr/ng-packagr/commit/932bf48)), closes [#1510](https://github.com/ng-packagr/ng-packagr/issues/1510)
+* lock rollup version ([75ac180](https://github.com/ng-packagr/ng-packagr/commit/75ac180)), closes [#1431](https://github.com/ng-packagr/ng-packagr/issues/1431)
+* remove redundant section in package.json ([5efad3a](https://github.com/ng-packagr/ng-packagr/commit/5efad3a))
+* reset glob cache on file add ([0306d59](https://github.com/ng-packagr/ng-packagr/commit/0306d59))
+* skip NGCC when file system is read only ([0e44793](https://github.com/ng-packagr/ng-packagr/commit/0e44793))
+* switch to a more accurate module analyse ([92ca053](https://github.com/ng-packagr/ng-packagr/commit/92ca053)), closes [#1523](https://github.com/ng-packagr/ng-packagr/issues/1523)
+* update commander to version ^4.0.0 ([ee41977](https://github.com/ng-packagr/ng-packagr/commit/ee41977))
+* update rollup to version 1.31.0 ([f8704fd](https://github.com/ng-packagr/ng-packagr/commit/f8704fd))
+* update update-notifier to version ^4.0.0 ([f05cbbf](https://github.com/ng-packagr/ng-packagr/commit/f05cbbf))
+
+
+### Features
+
+* add support for TypeScript 3.7 ([9e05fb3](https://github.com/ng-packagr/ng-packagr/commit/9e05fb3))
+* add support for TypeScript 3.6 ([342b799](https://github.com/ng-packagr/ng-packagr/commit/342b799))
+* add tslib as peerDepedency ([5077f87](https://github.com/ng-packagr/ng-packagr/commit/5077f87))
+* update peerDependencies ([7ff60f5](https://github.com/ng-packagr/ng-packagr/commit/7ff60f5))
+
+
+### Performance
+
+* re-populate glob cache ([3323b2a](https://github.com/ng-packagr/ng-packagr/commit/3323b2a))
+* remove less-plugin-npm-import ([6a5ae37](https://github.com/ng-packagr/ng-packagr/commit/6a5ae37))
+
+## [9.0.0-rc.9](https://github.com/ng-packagr/ng-packagr/compare/v9.0.0-rc.8...v9.0.0-rc.9) (2020-02-05)
+
+## [9.0.0-rc.8](https://github.com/ng-packagr/ng-packagr/compare/v9.0.0-rc.3...v9.0.0-rc.8) (2020-02-04)
+
+
+### Bug Fixes
+
+*  downlevel constructor parameters transformer with tsickle ([51d5498](https://github.com/ng-packagr/ng-packagr/commit/51d5498)), closes [#1517](https://github.com/ng-packagr/ng-packagr/issues/1517)
+* analyse only non done entry points ([e8db885](https://github.com/ng-packagr/ng-packagr/commit/e8db885))
+* analyse should cater for module name being the primary entry point ([7b8e491](https://github.com/ng-packagr/ng-packagr/commit/7b8e491))
+* circular dependency on itself error ([702c3f2](https://github.com/ng-packagr/ng-packagr/commit/702c3f2)), closes [#1508](https://github.com/ng-packagr/ng-packagr/issues/1508)
+* ignore `.gitkeep`, `Thumbs.db` and `.DS_Store` when copying files ([a5b10e2](https://github.com/ng-packagr/ng-packagr/commit/a5b10e2))
+* incorrect detection of potential dependent entry-points ([932bf48](https://github.com/ng-packagr/ng-packagr/commit/932bf48)), closes [#1510](https://github.com/ng-packagr/ng-packagr/issues/1510)
+* reset glob cache on file add ([0306d59](https://github.com/ng-packagr/ng-packagr/commit/0306d59))
+* switch to a more accurate module analyse ([92ca053](https://github.com/ng-packagr/ng-packagr/commit/92ca053)), closes [#1523](https://github.com/ng-packagr/ng-packagr/issues/1523)
+* update rollup to version 1.31.0 ([f8704fd](https://github.com/ng-packagr/ng-packagr/commit/f8704fd))
+* update update-notifier to version ^4.0.0 ([f05cbbf](https://github.com/ng-packagr/ng-packagr/commit/f05cbbf))
+
+
+### Features
+
+* add support for typescript 3.7 ([9e05fb3](https://github.com/ng-packagr/ng-packagr/commit/9e05fb3))
+
+
+### Performance
+
+* re-populate glob cache ([3323b2a](https://github.com/ng-packagr/ng-packagr/commit/3323b2a))
+
+## [9.0.0-rc.7](https://github.com/ng-packagr/ng-packagr/compare/v9.0.0-rc.6...v9.0.0-rc.7) (2020-01-09)
+
+
+### Bug Fixes
+
+* circular dependency on itself error ([702c3f2](https://github.com/ng-packagr/ng-packagr/commit/702c3f2)), closes [#1508](https://github.com/ng-packagr/ng-packagr/issues/1508)
+
+## [9.0.0-rc.6](https://github.com/ng-packagr/ng-packagr/compare/v9.0.0-rc.5...v9.0.0-rc.6) (2020-01-09)
+
+
+### Bug Fixes
+
+* analyse only non done entry points ([e8db885](https://github.com/ng-packagr/ng-packagr/commit/e8db885))
+* reset glob cache on file add ([0306d59](https://github.com/ng-packagr/ng-packagr/commit/0306d59))
+
+
+### Performance
+
+* re-populate glob cache ([3323b2a](https://github.com/ng-packagr/ng-packagr/commit/3323b2a))
+
+## [9.0.0-rc.5](https://github.com/ng-packagr/ng-packagr/compare/v9.0.0-rc.4...v9.0.0-rc.5) (2020-01-08)
+
+
+### Bug Fixes
+
+* update rollup to version 1.29.0 ([04fa486](https://github.com/ng-packagr/ng-packagr/commit/04fa486))
+
+### Performance
+* use TypeScript scanner to build dependency tree ([1cdc8c8](https://github.com/ng-packagr/ng-packagr/commit/1cdc8c8))
+
+## [9.0.0-rc.4](https://github.com/ng-packagr/ng-packagr/compare/v9.0.0-rc.3...v9.0.0-rc.4) (2020-01-07)
+
+
+### Bug Fixes
+
+* ignore `.gitkeep`, `Thumbs.db` and `.DS_Store` when copying files ([a5b10e2](https://github.com/ng-packagr/ng-packagr/commit/a5b10e2))
+* update rollup to version 1.28.0 ([624f31f](https://github.com/ng-packagr/ng-packagr/commit/624f31f))
+* update update-notifier to version ^4.0.0 ([f05cbbf](https://github.com/ng-packagr/ng-packagr/commit/f05cbbf))
+
+## [9.0.0-rc.3](https://github.com/ng-packagr/ng-packagr/compare/v9.0.0-rc.2...v9.0.0-rc.3) (2019-12-04)
+
+
+### Bug Fixes
+
+* add `assets` option to schema ([a5efd1c](https://github.com/ng-packagr/ng-packagr/commit/a5efd1c)), closes [#1092](https://github.com/ng-packagr/ng-packagr/issues/1092)
+* add link to Angular guide when showing ivy publish warning ([6bee029](https://github.com/ng-packagr/ng-packagr/commit/6bee029)), closes [#1453](https://github.com/ng-packagr/ng-packagr/issues/1453)
+
+## [9.0.0-rc.2](https://github.com/ng-packagr/ng-packagr/compare/v9.0.0-rc.1...v9.0.0-rc.2) (2019-11-14)
+
+
+### Bug Fixes
+
+* add more package json sections to remove ([57cc4d1](https://github.com/ng-packagr/ng-packagr/commit/57cc4d1))
+* remove redundant section in package.json ([5efad3a](https://github.com/ng-packagr/ng-packagr/commit/5efad3a))
+* skip NGCC when file system is read only ([0e44793](https://github.com/ng-packagr/ng-packagr/commit/0e44793))
+* update commander to version ^4.0.0 ([ee41977](https://github.com/ng-packagr/ng-packagr/commit/ee41977))
+* update rollup to version 1.26.2 ([8e91477](https://github.com/ng-packagr/ng-packagr/commit/8e91477))
+* update rollup to version 1.26.3 ([1a67c7c](https://github.com/ng-packagr/ng-packagr/commit/1a67c7c))
+* update rollup to version 1.26.4 ([844f7d3](https://github.com/ng-packagr/ng-packagr/commit/844f7d3))
+* update rollup to version 1.26.5 ([cb5bda7](https://github.com/ng-packagr/ng-packagr/commit/cb5bda7))
+
+## [9.0.0-rc.1](https://github.com/ng-packagr/ng-packagr/compare/v9.0.0-rc.0...v9.0.0-rc.1) (2019-10-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* Remove usage of deprecated `less-plugin-npm-import`. In less v3 is supports node_modules resolutions by default.
+
+Before
+```css
+@import '~module/less/linenumbers';
+```
+
+After
+```css
+@import 'module/less/linenumbers';
+```
+
+### Bug Fixes
+
+* lock rollup version ([75ac180](https://github.com/ng-packagr/ng-packagr/commit/75ac180)), closes [#1431](https://github.com/ng-packagr/ng-packagr/issues/1431)
+
+
+* remove less-plugin-npm-import ([6a5ae37](https://github.com/ng-packagr/ng-packagr/commit/6a5ae37))
+
+## [9.0.0-rc.0](https://github.com/ng-packagr/ng-packagr/compare/v5.7.0...v9.0.0-rc.0) (2019-10-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* TypeScript versions prior to 3.6.4 are no longer supported.
+* `tslib` will be longer be added as a `dependencies`, but rather it will be added as a `peerDependencies`. This is to be inline with the Angular framework.
+
+### Features
+
+* add support to TypeScript 3.6 ([342b799](https://github.com/ng-packagr/ng-packagr/commit/342b799))
+* add tslib as peerDepedency ([5077f87](https://github.com/ng-packagr/ng-packagr/commit/5077f87))
+* update peerDependencies ([7ff60f5](https://github.com/ng-packagr/ng-packagr/commit/7ff60f5))
+
+## [5.7.0](https://github.com/ng-packagr/ng-packagr/compare/v5.6.1...v5.7.0) (2019-10-15)
+
+
+### Bug Fixes
+
+* re prioritize ngcc `propertiesToConsider` properties based ([ea89fb3](https://github.com/ng-packagr/ng-packagr/commit/ea89fb3)), closes [/github.com/angular/angular-cli/blob/0d70565f9d80f1d765622eb8c8b2c3c701723599/packages/angular_devkit/build_angular/src/angular-cli-files/models/webpack-configs/browser.ts#L68](https://github.com/ng-packagr//github.com/angular/angular-cli/blob/0d70565f9d80f1d765622eb8c8b2c3c701723599/packages/angular_devkit/build_angular/src/angular-cli-files/models/webpack-configs/browser.ts/issues/L68)
+
+
+### Features
+
+* deprecate inlining of `bundledDependencies` ([0c52486](https://github.com/ng-packagr/ng-packagr/commit/0c52486))
+
+### [5.6.1](https://github.com/ng-packagr/ng-packagr/compare/v5.6.0...v5.6.1) (2019-10-09)
+
+
+### Bug Fixes
+
+* tsickle references to non imported values when using Angular 8 ([de5894b](https://github.com/ng-packagr/ng-packagr/commit/de5894b))
+
+## [5.6.0](https://github.com/ng-packagr/ng-packagr/compare/v5.5.1...v5.6.0) (2019-10-08)
+
+
+### Bug Fixes
+
+* disable internal `emitDecoratorMetadata` ([d0bf507](https://github.com/ng-packagr/ng-packagr/commit/d0bf507))
+* support the ng-package.json in secondary entry points ([#1406](https://github.com/ng-packagr/ng-packagr/issues/1406)) ([8b97bfa](https://github.com/ng-packagr/ng-packagr/commit/8b97bfa))
+* update @angular/cdk to version ~8.2.0 ([0007fef](https://github.com/ng-packagr/ng-packagr/commit/0007fef))
+
+
+### Build System
+
+* update @angular-devkit/build-angular to version ~0.803.0 ([194c6bb](https://github.com/ng-packagr/ng-packagr/commit/194c6bb))
+* update cross-env to version ^6.0.0 ([120331a](https://github.com/ng-packagr/ng-packagr/commit/120331a))
+* update jasmine-core to version ~3.5.0 ([#1404](https://github.com/ng-packagr/ng-packagr/issues/1404)) ([aeabd95](https://github.com/ng-packagr/ng-packagr/commit/aeabd95))
+* update ts-node to version ~8.4.0 ([9a4dddc](https://github.com/ng-packagr/ng-packagr/commit/9a4dddc))
+* update tslint to version ~5.20.0 ([4e4b1d5](https://github.com/ng-packagr/ng-packagr/commit/4e4b1d5))
+* update zone.js to version ^0.10.0 ([88f8cb4](https://github.com/ng-packagr/ng-packagr/commit/88f8cb4))
+
+
+### Features
+
+* copies `CHANGELOG.md` to package destination ([db5ad68](https://github.com/ng-packagr/ng-packagr/commit/db5ad68))
+
+
+### Tests
+
+* update angular cli dev packages ([3e26f7b](https://github.com/ng-packagr/ng-packagr/commit/3e26f7b))
+
+
+
 ### [5.5.1](https://github.com/ng-packagr/ng-packagr/compare/v5.5.0...v5.5.1) (2019-09-14)
 
 

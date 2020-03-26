@@ -86,13 +86,13 @@ Create one `package.json` per npm package, run _ng-packagr_ for each!
 * :surfer: Inlines Templates and Stylesheets
 * :sparkles: CSS Features
   * :camel: Runs [SCSS](http://sass-lang.com/guide) preprocessor, supporting the [relative `~` import syntax](https://github.com/webpack-contrib/sass-loader#imports) and custom include paths
-  * :elephant: Runs [less](http://lesscss.org/#getting-started) preprocessor, supports the relative `~` import syntax
   * :snake: Runs [Stylus](http://stylus-lang.com) preprocessor, resolves relative paths relative to ng-package.json
   * :monkey: Adds vendor-specific prefixes w/ [autoprefixer](https://github.com/postcss/autoprefixer#autoprefixer-) and [browserslist](https://github.com/ai/browserslist#queries) &mdash; just tell your desired `.browserslistrc`
   * :tiger: Embed assets data w/ [postcss-url](https://github.com/postcss/postcss-url#inline)
 
 
 ## How to…
+- [Copy Assets](docs/copy-assets.md)
 - [Embed Assets in CSS](docs/embed-assets-css.md)
 - [Managing Dependencies](docs/dependencies.md)
 - [Change the Entry File of a Library](docs/entry-file.md)
@@ -130,7 +130,7 @@ To orchestrate the different tools, ng-packagr features a [custom transformation
 
 ## Knowledge
 
-[Angular Package Format v6.0](https://docs.google.com/document/d/1CZC2rcpxffTDfRDs6p1cfbmKNLA6x5O-NtkJglDaBVs/preview), design document at Google Docs
+[Angular Package Format v9.0](https://docs.google.com/document/d/1CZC2rcpxffTDfRDs6p1cfbmKNLA6x5O-NtkJglDaBVs/preview), design document at Google Docs
 
 Packaging Angular Libraries - Jason Aden at Angular Mountain View Meetup ([Jan 2018, 45min talk](https://www.youtube.com/watch?v=QfvwQEJVOig&t=3612s))
 

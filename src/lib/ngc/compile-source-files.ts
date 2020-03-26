@@ -1,11 +1,11 @@
 import * as ng from '@angular/compiler-cli';
 import * as ts from 'typescript';
-import * as log from '../util/log';
+import * as log from '../utils/log';
 import { redirectWriteFileCompilerHost } from '../ts/redirect-write-file-compiler-host';
 import { cacheCompilerHost } from '../ts/cache-compiler-host';
-import { StylesheetProcessor } from '../ng-v5/entry-point/resources/stylesheet-processor';
-import { BuildGraph } from '../brocc/build-graph';
-import { EntryPointNode, isEntryPointInProgress } from '../ng-v5/nodes';
+import { StylesheetProcessor } from '../styles/stylesheet-processor';
+import { BuildGraph } from '../graph/build-graph';
+import { EntryPointNode, isEntryPointInProgress } from '../ng-package/nodes';
 import { NgccProcessor } from './ngcc-processor';
 import { ngccTransformCompilerHost } from '../ts/ngcc-transform-compiler-host';
 import { createEmitCallback } from './create-emit-callback';
@@ -76,6 +76,11 @@ export async function compileSourceFiles(
     ...ngProgram.getNgStructuralDiagnostics(),
   ];
 
+  const beforeTs: ts.TransformerFactory<ts.SourceFile>[] = [];
+  if (!tsConfigOptions.annotateForClosureCompiler) {
+    beforeTs.push(downlevelConstructorParameters(() => ngProgram.getTsProgram().getTypeChecker()));
+  }
+
   // if we have an error we don't want to transpile.
   const hasError = ng.exitCodeFromResult(allDiagnostics) > 0;
   if (!hasError) {
@@ -86,7 +91,7 @@ export async function compileSourceFiles(
       // For Ivy we don't need a custom emitCallback to have tsickle transforms
       emitCallback: tsConfigOptions.enableIvy ? undefined : createEmitCallback(tsConfigOptions),
       customTransformers: {
-        beforeTs: [downlevelConstructorParameters(() => ngProgram.getTsProgram().getTypeChecker())],
+        beforeTs,
       },
     });
 
