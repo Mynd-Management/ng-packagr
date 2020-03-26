@@ -1,13 +1,13 @@
 import * as ng from '@angular/compiler-cli';
 import * as path from 'path';
 import * as ts from 'typescript';
-import { BuildGraph } from '../brocc/build-graph';
-import { Node } from '../brocc/node';
-import { FileCache } from '../file/file-cache';
+import { FileCache } from '../file-system/file-cache';
+import { BuildGraph } from '../graph/build-graph';
+import { Node } from '../graph/node';
+import { EntryPointNode, fileUrl } from '../ng-package/nodes';
 import { pugProcessor } from '../ng-v5/entry-point/resources/pug-processor';
-import { StylesheetProcessor } from '../ng-v5/entry-point/resources/stylesheet-processor';
-import { EntryPointNode, fileUrl } from '../ng-v5/nodes';
-import { ensureUnixPath } from '../util/path';
+import { StylesheetProcessor } from '../styles/stylesheet-processor';
+import { ensureUnixPath } from '../utils/path';
 
 export function cacheCompilerHost(
   graph: BuildGraph,
@@ -98,6 +98,20 @@ export function cacheCompilerHost(
       );
 
       return resolvedModule && resolvedModule.resolvedFileName;
+    },
+
+    resolveModuleNames: (moduleNames: string[], containingFile: string) => {
+      return moduleNames.map(moduleName => {
+        const { resolvedModule } = ts.resolveModuleName(
+          moduleName,
+          ensureUnixPath(containingFile),
+          compilerOptions,
+          compilerHost,
+          moduleResolutionCache,
+        );
+
+        return resolvedModule;
+      });
     },
 
     resourceNameToFileName: (resourceName: string, containingFilePath: string) => {
