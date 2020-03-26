@@ -5,7 +5,7 @@ import { FileCache } from '../file-system/file-cache';
 import { BuildGraph } from '../graph/build-graph';
 import { Node } from '../graph/node';
 import { EntryPointNode, fileUrl } from '../ng-package/nodes';
-import { pugProcessor } from '../ng-v5/entry-point/resources/pug-processor';
+import { pugProcessor } from '../styles/pug-processor';
 import { StylesheetProcessor } from '../styles/stylesheet-processor';
 import { ensureUnixPath } from '../utils/path';
 
@@ -66,7 +66,7 @@ export function cacheCompilerHost(
       sourceFiles?: ReadonlyArray<ts.SourceFile>,
     ) => {
       if (fileName.endsWith('.d.ts')) {
-        sourceFiles.forEach(source => {
+        sourceFiles.forEach((source) => {
           const cache = sourcesFileCache.getOrCreate(source.fileName);
           if (!cache.declarationFileName) {
             cache.declarationFileName = ensureUnixPath(fileName);
@@ -101,7 +101,7 @@ export function cacheCompilerHost(
     },
 
     resolveModuleNames: (moduleNames: string[], containingFile: string) => {
-      return moduleNames.map(moduleName => {
+      return moduleNames.map((moduleName) => {
         const { resolvedModule } = ts.resolveModuleName(
           moduleName,
           ensureUnixPath(containingFile),
