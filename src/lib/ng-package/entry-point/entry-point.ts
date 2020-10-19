@@ -8,17 +8,13 @@ export interface DestinationFiles {
   declarations: string;
   /** Absolute path of this entry point `metadata` */
   metadata: string;
-  /** Absolute path of this entry point `FESM5` module */
-  fesm5: string;
-  /** Absolute path of this entry point `FESM5` module */
+  /** Absolute path of this entry point `FESM2015` module */
   fesm2015: string;
-  /** Absolute path of this entry point `ESM5` module */
-  esm5: string;
   /** Absolute path of this entry point `ESM2015` module */
   esm2015: string;
   /** Absolute path of this entry point `UMD` bundle */
   umd: string;
-  /** Absolute path of this entry point `UMD` Minifief bundle */
+  /** Absolute path of this entry point `UMD` minified bundle */
   umdMinified: string;
 }
 
@@ -54,12 +50,12 @@ export interface DestinationFiles {
 export class NgEntryPoint {
   constructor(
     /** Values from the `package.json` file of this entry point. */
-    public readonly packageJson: any,
+    public readonly packageJson: Record<string, any>,
     /** Values from either the `ngPackage` option (from `package.json`) or values from `ng-package.json`. */
     public readonly ngPackageJson: NgPackageConfig,
     /** Absolute directory path of this entry point's `package.json` location. */
     public readonly basePath: string,
-    /** XX: additional auto-configured data passed for scondary entry point's. Needs better docs. */
+    /** XX: additional auto-configured data passed for secondary entry point's. Needs better docs. */
     private readonly secondaryData?: { [key: string]: any },
   ) {}
 
@@ -98,9 +94,7 @@ export class NgEntryPoint {
       metadata: pathJoinWithDest(secondaryDir, `${flatModuleFile}.metadata.json`),
       declarations: pathJoinWithDest(secondaryDir, `${flatModuleFile}.d.ts`),
       esm2015: pathJoinWithDest('esm2015', secondaryDir, `${flatModuleFile}.js`),
-      esm5: pathJoinWithDest('esm5', secondaryDir, `${flatModuleFile}.js`),
       fesm2015: pathJoinWithDest('fesm2015', `${flatModuleFile}.js`),
-      fesm5: pathJoinWithDest('fesm5', `${flatModuleFile}.js`),
       umd: pathJoinWithDest('bundles', `${flatModuleFile}.umd.js`),
       umdMinified: pathJoinWithDest('bundles', `${flatModuleFile}.umd.min.js`),
     };
@@ -132,23 +126,15 @@ export class NgEntryPoint {
     return this.$get('lib.umdModuleIds');
   }
 
-  public get jsxConfig(): string {
-    return this.$get('lib.jsx');
-  }
-
   public get flatModuleFile(): string {
     return this.$get('lib.flatModuleFile') || this.flattenModuleId('-');
   }
 
   public get styleIncludePaths(): string[] {
     const includePaths = this.$get('lib.styleIncludePaths') || [];
-    return includePaths.map(
-      includePath => (path.isAbsolute(includePath) ? includePath : path.resolve(this.basePath, includePath)),
+    return includePaths.map((includePath) =>
+      path.isAbsolute(includePath) ? includePath : path.resolve(this.basePath, includePath),
     );
-  }
-
-  public get languageLevel(): string[] {
-    return this.$get('lib.languageLevel');
   }
 
   /**
@@ -183,10 +169,7 @@ export class NgEntryPoint {
 
   private flattenModuleId(separator: string = '.') {
     if (this.moduleId.startsWith('@')) {
-      return this.moduleId
-        .substring(1)
-        .split('/')
-        .join(separator);
+      return this.moduleId.substring(1).split('/').join(separator);
     } else {
       return this.moduleId.split('/').join(separator);
     }

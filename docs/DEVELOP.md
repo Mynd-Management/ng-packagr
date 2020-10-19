@@ -1,6 +1,4 @@
-Develop Guideline
-=================
-
+# Develop Guideline
 
 ## Release & Publish Workflow
 
@@ -19,7 +17,7 @@ $ git push --follow-tags origin master
 This pushes branch `master` and the `v{x}.{y}.{z}` tag to the GitHub repository, thus triggering a build on Circle CI.
 Circle CI will checkout the Git tag, build from sources (again), and automatically publish to the npm registry.
 
-If neccessary, distributable artefacts can be created and published by hand:
+If necessary, distributable artefacts can be created and published by hand:
 
 ```bash
 $ yarn pack dist

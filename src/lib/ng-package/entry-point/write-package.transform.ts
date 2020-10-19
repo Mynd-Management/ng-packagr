@@ -7,8 +7,8 @@ import { ensureUnixPath } from '../../utils/path';
 import { rimraf } from '../../utils/rimraf';
 import * as log from '../../utils/log';
 import { globFiles } from '../../utils/glob';
-import { EntryPointNode, isEntryPointInProgress, isPackage, PackageNode } from '../nodes';
-import { copyFile } from '../../utils/copy';
+import { EntryPointNode, isEntryPointInProgress, isPackage, PackageNode, fileUrl } from '../nodes';
+import { Node } from '../../graph/node';
 
 export const writePackageTransform: Transform = transformFromPromise(async graph => {
   const entryPoint = graph.find(isEntryPointInProgress()) as EntryPointNode;
@@ -24,23 +24,6 @@ export const writePackageTransform: Transform = transformFromPromise(async graph
     `${ngPackage.dest}/**`,
   ];
 
-  // we don't want to copy `dist` and 'node_modules' declaration files but only files in source
-  const declarationFiles = await globFiles(`${path.dirname(ngEntryPoint.entryFilePath)}/**/*.d.ts`, {
-    ignore: ignorePaths,
-    cache: ngPackageNode.cache.globCache,
-  });
-
-  if (declarationFiles.length) {
-    // COPY SOURCE FILES TO DESTINATION
-    log.info('Copying declaration files');
-    await Promise.all(
-      declarationFiles.map(value => {
-        const relativePath = path.relative(ngEntryPoint.entryFilePath, value);
-        const destination = path.resolve(destinationFiles.declarations, relativePath);
-        return copyFile(value, destination, { overwrite: true, dereference: true });
-      }),
-    );
-  }
   if (ngPackage.assets.length && !ngEntryPoint.isSecondaryEntryPoint) {
     const assets = ngPackage.assets.map(x => path.join(ngPackage.src, x));
     const assetFiles = await globFiles(assets, {
@@ -48,16 +31,13 @@ export const writePackageTransform: Transform = transformFromPromise(async graph
       cache: ngPackageNode.cache.globCache,
     });
 
-    if (assetFiles.length) {
-      // COPY ASSET FILES TO DESTINATION
-      log.info('Copying assets');
-      await Promise.all(
-        assetFiles.map(value => {
-          const relativePath = path.relative(ngPackage.src, value);
-          const destination = path.resolve(ngPackage.dest, relativePath);
-          return copyFile(value, destination, { overwrite: true, dereference: true });
-        }),
-      );
+    // COPY ASSET FILES TO DESTINATION
+    log.info('Copying assets');
+    for (const file of assetFiles) {
+      const relativePath = path.relative(ngPackage.src, file);
+      const destination = path.resolve(ngPackage.dest, relativePath);
+      entryPoint.dependsOn(new Node(fileUrl(ensureUnixPath(relativePath))));
+      fs.copySync(file, destination, { overwrite: true, dereference: true });
     }
   }
 
@@ -73,11 +53,9 @@ export const writePackageTransform: Transform = transformFromPromise(async graph
     ngPackage,
     {
       main: relativeUnixFromDestPath(destinationFiles.umd),
-      module: relativeUnixFromDestPath(destinationFiles.fesm5),
+      module: relativeUnixFromDestPath(destinationFiles.fesm2015),
       es2015: relativeUnixFromDestPath(destinationFiles.fesm2015),
-      esm5: relativeUnixFromDestPath(destinationFiles.esm5),
       esm2015: relativeUnixFromDestPath(destinationFiles.esm2015),
-      fesm5: relativeUnixFromDestPath(destinationFiles.fesm5),
       fesm2015: relativeUnixFromDestPath(destinationFiles.fesm2015),
       typings: relativeUnixFromDestPath(destinationFiles.declarations),
       // Ivy doesn't generate metadata files
@@ -123,22 +101,28 @@ async function writePackageJson(
   // version at least matches that of angular if we use require('tslib').version
   // it will get what installed and not the minimum version nor if it is a `~` or `^`
   // this is only required for primary
-  if (
-    !entryPoint.isSecondaryEntryPoint &&
-    !(packageJson.peerDependencies && packageJson.peerDependencies.tslib) &&
-    !(packageJson.dependencies && packageJson.dependencies.tslib)
-  ) {
-    const {
-      peerDependencies: angularPeerDependencies = {},
-      dependencies: angularDependencies = {},
-    } = require('@angular/compiler/package.json');
-    const tsLibVersion = angularPeerDependencies.tslib || angularDependencies.tslib;
+  if (!entryPoint.isSecondaryEntryPoint) {
+    if (!packageJson.peerDependencies?.tslib && !packageJson.dependencies?.tslib) {
+      const {
+        peerDependencies: angularPeerDependencies = {},
+        dependencies: angularDependencies = {},
+      } = require('@angular/compiler/package.json');
+      const tsLibVersion = angularPeerDependencies.tslib || angularDependencies.tslib;
 
-    if (tsLibVersion) {
-      packageJson.peerDependencies = {
-        ...packageJson.peerDependencies,
-        tslib: tsLibVersion,
+      if (tsLibVersion) {
+        packageJson.dependencies = {
+          ...packageJson.dependencies,
+          tslib: tsLibVersion,
+        };
+      }
+    } else if (packageJson.peerDependencies?.tslib) {
+      log.warn(`'tslib' is no longer recommended to be used as a 'peerDependencies'. Moving it to 'dependencies'.`);
+      packageJson.dependencies = {
+        ...(packageJson.dependencies || {}),
+        tslib: packageJson.peerDependencies.tslib,
       };
+
+      delete packageJson.peerDependencies.tslib;
     }
   }
 
