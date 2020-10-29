@@ -1,4 +1,5 @@
 import { pipe } from 'rxjs';
+import { createModuleResolutionCache } from 'typescript';
 import { STATE_DONE } from '../../graph/node';
 import { isInProgress } from '../../graph/select';
 import { Transform, transformFromPromise } from '../../graph/transform';
@@ -40,7 +41,7 @@ export const entryPointTransformFactory = (
   pipe(
     //tap(() => log.info(`Building from sources for entry point`)),
 
-    transformFromPromise(async (graph) => {
+    transformFromPromise(async graph => {
       // Peek the first entry point from the graph
       const entryPoint = graph.find(byEntryPoint().and(isInProgress));
       log.msg('\n------------------------------------------------------------------------------');
@@ -52,9 +53,23 @@ export const entryPointTransformFactory = (
     // After TypeScript: bundling and write package
     writeBundles,
     writePackage,
-    transformFromPromise(async (graph) => {
-      const entryPoint = graph.find(byEntryPoint().and(isInProgress));
+    transformFromPromise(async graph => {
+      const entryPoint = graph.find(byEntryPoint().and(isInProgress)) as any;
       entryPoint.state = STATE_DONE;
+      if (global.gc) {
+        entryPoint.cache.oldPrograms = undefined;
+        entryPoint.cache.sourcesFileCache.clear();
+        entryPoint.cache.analysesSourcesFileCache.clear();
+        entryPoint.cache.moduleResolutionCache = createModuleResolutionCache(process.cwd(), s => s);
+        entryPoint.cache.rollupFESMCache = undefined;
+        entryPoint.cache.rollupUMDCache = undefined;
+        global.gc();
+        log.msg(
+          `Clearing '${entryPoint.data.entryPoint.moduleId}' entrypoint cache (Heapsize: ${Math.round(
+            process.memoryUsage().heapTotal / 1024 / 1024,
+          )} MiB)`,
+        );
+      }
     }),
 
     //tap(() => log.info(`Built.`))
