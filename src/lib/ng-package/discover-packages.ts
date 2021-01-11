@@ -1,4 +1,3 @@
-import * as ajv from 'ajv';
 import { pathExistsSync, lstat } from 'fs-extra';
 import * as path from 'path';
 import * as log from '../utils/log';
@@ -6,26 +5,15 @@ import { ensureUnixPath } from '../utils/path';
 import { NgEntryPoint } from './entry-point/entry-point';
 import { NgPackage } from './package';
 import { globFiles } from '../utils/glob';
-
-const ngPackageSchemaJson = require('../../ng-package.schema.json');
+import { validateNgPackageSchema } from './schema';
 
 interface UserPackage {
-  packageJson: object;
-  ngPackageJson: object;
+  /** Values from the `package.json` file of this user package. */
+  packageJson: Record<string, any>;
+  /** NgPackageConfig for this user package. */
+  ngPackageJson: Record<string, any>;
+  /** Absolute directory path of this user package. */
   basePath: string;
-}
-
-function formatSchemaValidationErrors(errors: ajv.ErrorObject[]): string {
-  return errors
-    .map(err => {
-      let message = `Data path ${JSON.stringify(err.dataPath)} ${err.message}`;
-      if (err.keyword === 'additionalProperties') {
-        message += ` (${(err.params as any).additionalProperty})`;
-      }
-
-      return message + '.';
-    })
-    .join('\n');
 }
 
 /**
@@ -40,13 +28,17 @@ async function resolveUserPackage(folderPathOrFilePath: string, isSecondary = fa
   const fullPath = path.resolve(folderPathOrFilePath);
   const pathStats = await lstat(fullPath);
   const basePath = pathStats.isDirectory() ? fullPath : path.dirname(fullPath);
-  const packageJson = await readConfigFile(path.join(basePath, 'package.json'));
+  const packageJson: unknown = await readConfigFile(path.join(basePath, 'package.json'));
 
   if (!packageJson && !isSecondary) {
     throw new Error(`Cannot discover package sources at ${folderPathOrFilePath} as 'package.json' was not found.`);
   }
 
-  let ngPackageJson: undefined | object;
+  if (packageJson && typeof packageJson !== 'object') {
+    throw new Error(`Invalid 'package.json' at ${folderPathOrFilePath}.`);
+  }
+
+  let ngPackageJson: unknown;
   if (packageJson && packageJson['ngPackage']) {
     // Read `ngPackage` from `package.json`
     ngPackageJson = { ...packageJson['ngPackage'] };
@@ -60,18 +52,7 @@ async function resolveUserPackage(folderPathOrFilePath: string, isSecondary = fa
   }
 
   if (ngPackageJson) {
-    const _ajv = ajv({
-      schemaId: 'auto',
-      useDefaults: true,
-    });
-
-    const validate = _ajv.compile(ngPackageSchemaJson);
-    const isValid = validate(ngPackageJson);
-    if (!isValid) {
-      throw new Error(
-        `Configuration doesn\'t match the required schema.\n${formatSchemaValidationErrors(validate.errors)}`,
-      );
-    }
+    validateNgPackageSchema(ngPackageJson);
 
     return {
       basePath,
@@ -124,20 +105,17 @@ async function findSecondaryPackagesPaths(directoryPath: string, excludeFolder: 
 /**
  * Reads a secondary entry point from it's package file.
  *
- * @param primaryDirectoryPath A path pointing to the directory of the primary entry point.
  * @param primary The primary entry point.
+ * @param userPackage The user package for the secondary entry point.
  */
-function secondaryEntryPoint(
-  primaryDirectoryPath: string,
-  primary: NgEntryPoint,
-  { packageJson, ngPackageJson, basePath }: UserPackage,
-): NgEntryPoint {
-  if (path.resolve(basePath) === path.resolve(primaryDirectoryPath)) {
+function secondaryEntryPoint(primary: NgEntryPoint, userPackage: UserPackage): NgEntryPoint {
+  const { packageJson, ngPackageJson, basePath } = userPackage;
+  if (path.resolve(basePath) === path.resolve(primary.basePath)) {
     log.error(`Cannot read secondary entry point. It's already a primary entry point. Path: ${basePath}`);
     throw new Error(`Secondary entry point is already a primary.`);
   }
 
-  const relativeSourcePath = path.relative(primaryDirectoryPath, basePath);
+  const relativeSourcePath = path.relative(primary.basePath, basePath);
   const secondaryModuleId = ensureUnixPath(`${primary.moduleId}/${relativeSourcePath}`);
 
   return new NgEntryPoint(packageJson, ngPackageJson, basePath, {
@@ -160,7 +138,7 @@ export async function discoverPackages({ project }: { project: string }): Promis
   for (const folderPath of folderPaths) {
     const secondaryPackage = await resolveUserPackage(folderPath, true);
     if (secondaryPackage) {
-      secondaries.push(secondaryEntryPoint(basePath, primary, secondaryPackage));
+      secondaries.push(secondaryEntryPoint(primary, secondaryPackage));
     }
   }
 

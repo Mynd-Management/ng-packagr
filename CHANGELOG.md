@@ -2,6 +2,251 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [11.0.3](https://github.com/ng-packagr/ng-packagr/compare/v11.0.2...v11.0.3) (2020-11-21)
+
+
+### Bug Fixes
+
+* correctly resolve sourceRoot ([6673dbc](https://github.com/ng-packagr/ng-packagr/commit/6673dbcc7903ba766f44c44d6fb39967ef0f002e))
+
+### [11.0.2](https://github.com/ng-packagr/ng-packagr/compare/v11.0.1...v11.0.2) (2020-11-12)
+
+
+### Bug Fixes
+
+* sourcemap should not differ based on build path ([1504c8e](https://github.com/ng-packagr/ng-packagr/commit/1504c8e06a64aee5b3ecc09327af25de5bd58385))
+* Revert "fix: update @rollup/plugin-commonjs to version ^16.0.0"
+
+### [11.0.1](https://github.com/ng-packagr/ng-packagr/compare/v11.0.0...v11.0.1) (2020-11-11)
+
+## [11.0.0](https://github.com/ng-packagr/ng-packagr/compare/v11.0.0-rc.0...v11.0.0) (2020-11-11)
+
+
+### Bug Fixes
+
+* sourcemap should not differ based on build path ([6f946b7](https://github.com/ng-packagr/ng-packagr/commit/6f946b7c91c88fed1d6aa3fa6e06335d5769e86e))
+
+## [11.0.0-rc.0](https://github.com/ng-packagr/ng-packagr/compare/v11.0.0-next.3...v11.0.0-rc.0) (2020-11-05)
+
+## [11.0.0-next.3](https://github.com/ng-packagr/ng-packagr/compare/v11.0.0-next.2...v11.0.0-next.3) (2020-10-29)
+
+
+### Features
+
+* improve progress reporting ([3a9827f](https://github.com/ng-packagr/ng-packagr/commit/3a9827f6a8f0398a8c2f8e4ead8a02b9a2a13ffd))
+
+
+### Bug Fixes
+
+* update @rollup/plugin-commonjs to version ^16.0.0 ([75e5d51](https://github.com/ng-packagr/ng-packagr/commit/75e5d51e4260d2c514cb8492f5d53b925d2cef25))
+* update @rollup/plugin-node-resolve to version ^10.0.0 ([e76b97b](https://github.com/ng-packagr/ng-packagr/commit/e76b97b0a736fcfdfc7e8d0abd5c317a352cf856))
+
+## [11.0.0-next.2](https://github.com/ng-packagr/ng-packagr/compare/v11.0.0-next.1...v11.0.0-next.2) (2020-10-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* TypeScript 3.9 is no longer supported, please upgrade to TypeScript 4.0.
+
+
+## [11.0.0-next.1](https://github.com/ng-packagr/ng-packagr/compare/v11.0.0-next.0...v11.0.0-next.1) (2020-10-14)
+
+
+### Bug Fixes
+
+* clear analysis cache to detect invalid imports in watch mode ([d6a3920](https://github.com/ng-packagr/ng-packagr/commit/d6a39203bb0fdbe1b5465355261a0c3b0a2c7501))
+
+
+### Performance
+
+* initialize ajv validator only once ([24f4b83](https://github.com/ng-packagr/ng-packagr/commit/24f4b8382edd5ee12c7c32a621fc15931dcf22ec))
+* short-circuit ngcc processing across entry-points ([599b742](https://github.com/ng-packagr/ng-packagr/commit/599b742b45f902e1402d4e9ac046a4223530be6b))
+* use set semantics when computing which entry-points to recompile ([f0f52c7](https://github.com/ng-packagr/ng-packagr/commit/f0f52c744c2b9e9b7977c2f11c28686ccb5a3e85))
+* use shared module resolution cache across all entry-points ([954ae79](https://github.com/ng-packagr/ng-packagr/commit/954ae797581e80969456c803f5d7467ad5403239))
+
+## [11.0.0-next.0](https://github.com/ng-packagr/ng-packagr/compare/v10.1.2...v11.0.0-next.0) (2020-10-09)
+
+
+### Features
+
+* support Angular 11 ([66719af](https://github.com/ng-packagr/ng-packagr/commit/66719af0aa3238bdee2d09428979a2c32a24b5f5))
+
+### [10.1.2](https://github.com/ng-packagr/ng-packagr/compare/v10.1.1...v10.1.2) (2020-09-26)
+
+
+### Bug Fixes
+
+* fix windows less spawn error ([9174c0b](https://github.com/ng-packagr/ng-packagr/commit/9174c0bca7290a4505f33f7fa13332785ea47459))
+
+### [10.1.1](https://github.com/ng-packagr/ng-packagr/compare/v10.1.0...v10.1.1) (2020-09-25)
+
+
+### Bug Fixes
+
+* add basePath as sourceRoot ([681fb1c](https://github.com/ng-packagr/ng-packagr/commit/681fb1c36b68efb3078dc3d846776e9e749ebf44))
+* replace execFile with execFileSync to fix a potential malicious cmd injection ([bda0fff](https://github.com/ng-packagr/ng-packagr/commit/bda0fff3443301f252930a73fdc8fb9502de596d))
+
+## [10.1.0](https://github.com/ng-packagr/ng-packagr/compare/v10.0.4...v10.1.0) (2020-08-27)
+
+
+### Features
+
+* add support for TypeScript 4 ([eb8b0c2](https://github.com/ng-packagr/ng-packagr/commit/eb8b0c2553aa1847f4ab42f29a1a25e67f644d29))
+* show warning on deprecated option usage ([551a4d9](https://github.com/ng-packagr/ng-packagr/commit/551a4d9a866a8c337189f807d755856b995ffc9b))
+
+
+### Bug Fixes
+
+* update commander to version ^6.0.0 ([ec736e5](https://github.com/ng-packagr/ng-packagr/commit/ec736e5df6978be79dca236683936941f349a8e5))
+
+
+### Performance
+
+* cache normalized paths ([92f68e3](https://github.com/ng-packagr/ng-packagr/commit/92f68e3f09f66c990413e09cda5d742ad00c5b7f))
+
+### [10.0.4](https://github.com/ng-packagr/ng-packagr/compare/v10.0.3...v10.0.4) (2020-08-13)
+
+
+### Bug Fixes
+
+* update @rollup/plugin-commonjs to version ^15.0.0 ([cc3254a](https://github.com/ng-packagr/ng-packagr/commit/cc3254aa230e1c94991514e780facc2eb19b4546))
+* update @rollup/plugin-node-resolve to version ^9.0.0 ([47606fd](https://github.com/ng-packagr/ng-packagr/commit/47606fd2ae254e024d9fdcac11489e114ced145a))
+
+### [10.0.3](https://github.com/ng-packagr/ng-packagr/compare/v10.0.2...v10.0.3) (2020-07-22)
+
+
+### Performance
+
+* implement rollup caching ([eb13316](https://github.com/ng-packagr/ng-packagr/commit/eb1331641b2828da0d188d5934f68f7307e6817b)), closes [#1580](https://github.com/ng-packagr/ng-packagr/issues/1580)
+
+### [10.0.2](https://github.com/ng-packagr/ng-packagr/compare/v10.0.1...v10.0.2) (2020-07-16)
+
+
+### Bug Fixes
+
+* pass tsconfig path to ngcc ([fd18984](https://github.com/ng-packagr/ng-packagr/commit/fd18984e9e7e6b04b7fbbcd95c1adce5aff3c940))
+* update @rollup/plugin-commonjs to version ^14.0.0 ([6581390](https://github.com/ng-packagr/ng-packagr/commit/6581390f3f9140e7b4bd80312b1740821443132c))
+
+### [10.0.1](https://github.com/ng-packagr/ng-packagr/compare/v10.0.0...v10.0.1) (2020-07-09)
+
+
+### Bug Fixes
+
+* don't copy assets asynchronously ([374ec29](https://github.com/ng-packagr/ng-packagr/commit/374ec2964e8fbc49408462f4b4a936e4712e91ca))
+* update rxjs to version ~6.6.0 ([2ce95ab](https://github.com/ng-packagr/ng-packagr/commit/2ce95ab34f5cc0126a9c287163a3d43d6d3999b5))
+
+## [10.0.0](https://github.com/ng-packagr/ng-packagr/compare/v10.0.0-rc.2...v10.0.0) (2020-06-24)
+
+## [10.0.0-rc.2](https://github.com/ng-packagr/ng-packagr/compare/v10.0.0-rc.1...v10.0.0-rc.2) (2020-06-12)
+
+
+### Bug Fixes
+
+* issues with emitting declarationMap ([38ad52b](https://github.com/ng-packagr/ng-packagr/commit/38ad52b0980428a300126c4d8b83c5d06d552f29)), closes [#1464](https://github.com/ng-packagr/ng-packagr/issues/1464)
+
+## [10.0.0-rc.1](https://github.com/ng-packagr/ng-packagr/compare/v10.0.0-rc.0...v10.0.0-rc.1) (2020-06-10)
+
+
+### Bug Fixes
+
+* disable CSS `calc` optimizations ([bdcc938](https://github.com/ng-packagr/ng-packagr/commit/bdcc938f765f3d58a79b395dcf7a749efddd3e94))
+* release commit message formatting ([300b4bf](https://github.com/ng-packagr/ng-packagr/commit/300b4bff0534d5fe1591063488b8ade3ef396900))
+* update @rollup/plugin-commonjs to version ^13.0.0 ([9413dbd](https://github.com/ng-packagr/ng-packagr/commit/9413dbd34f8d6a57abbfb9d71a72e97ecac47e1c))
+* watch assets files and re-copy on changes ([e7465c3](https://github.com/ng-packagr/ng-packagr/commit/e7465c3cbd5b0094af4739ec9250b34c4f3aad27)), closes [#1545](https://github.com/ng-packagr/ng-packagr/issues/1545)
+
+## [10.0.0-rc.0](https://github.com/ng-packagr/ng-packagr/compare/v10.0.0-next.2...v10.0.0-rc.0) (2020-05-28)
+
+
+### Bug Fixes
+
+* remove custom namespaced sourceRoot in sourcemaps ([481dd8f](https://github.com/ng-packagr/ng-packagr/commit/481dd8f77c927b564e3d3eb8c79e6cecdc580b52)), closes [#1622](https://github.com/ng-packagr/ng-packagr/issues/1622)
+* remove tslib from peerDependencies when adding it to dependencies ([2981f73](https://github.com/ng-packagr/ng-packagr/commit/2981f73ff264caca66886f4a62027d26e69e410b))
+* update @rollup/plugin-commonjs to version ^12.0.0 ([e89c5b1](https://github.com/ng-packagr/ng-packagr/commit/e89c5b1d325a83230428b1d8874d4a46fb6a0514))
+* update @rollup/plugin-node-resolve to version ^8.0.0 ([b2ac9a2](https://github.com/ng-packagr/ng-packagr/commit/b2ac9a291a1ce7bcdb33f00b04408ccc6c76e71c))
+
+
+### Performance
+
+* don't set setParentNodes for analyse sourcefiles ([d0ce240](https://github.com/ng-packagr/ng-packagr/commit/d0ce240130548b6633499f0685d6bbbff0cbb186))
+
+## [10.0.0-next.2](https://github.com/ng-packagr/ng-packagr/compare/v10.0.0-next.1...v10.0.0-next.2) (2020-05-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* `cssUrl` option default value has been changed to `inline`
+More info about this option can be found: https://github.com/ng-packagr/ng-packagr/blob/master/docs/embed-assets-css.md
+* TypeScript 3.8 is no longer supported, please update to TypeScript 3.9
+
+### Features
+
+* embed assets in css file using data uri by default ([d2a5731](https://github.com/ng-packagr/ng-packagr/commit/d2a573184dca47fbb0b0042614444e74e7e304b2))
+
+
+### Bug Fixes
+
+* auto add tslib as direct dependency ([4145af5](https://github.com/ng-packagr/ng-packagr/commit/4145af5588d57c6749535c3a3cbc242b296fae0a))
+
+
+* update to TypeScript 3.9 ([8524648](https://github.com/ng-packagr/ng-packagr/commit/8524648cad5ab8a24520c472304d533d28207b99))
+
+## [10.0.0-next.1](https://github.com/ng-packagr/ng-packagr/compare/v10.0.0-next.0...v10.0.0-next.1) (2020-05-13)
+
+
+### Performance
+
+* ignore node_modules from file watching ([74696e4](https://github.com/ng-packagr/ng-packagr/commit/74696e477070e47df3f118278f9220e269d885ab)), closes [#1583](https://github.com/ng-packagr/ng-packagr/issues/1583)
+* use endsWith instead of complex RegExp during dependency analysis ([4f550be](https://github.com/ng-packagr/ng-packagr/commit/4f550be7376d90d9aef7a5fcdc269ec3a17f42d5))
+
+## [10.0.0-next.0](https://github.com/ng-packagr/ng-packagr/compare/v9.1.2...v10.0.0-next.0) (2020-05-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* Deprecated `jsx` and `languageLevel` has been removed, Set these options in your `tsconfig.json` instead.
+* esm5 and fesm5 formats are no longer generated.
+
+If you are not using Angular CLI to build your application or library,
+and you need to be able to build es5 artifacts, then you will need to
+downlevel the distributed Angular code to es5 on your own.
+
+Angular CLI will automatically downlevel the code to es5.
+
+### Features
+
+* add support for Angular version 10 ([cb984cd](https://github.com/ng-packagr/ng-packagr/commit/cb984cd161a3e7991a87dcd1315adfee10ae33ec))
+* replace css optimizer from clean-css with cssnano ([2c6160f](https://github.com/ng-packagr/ng-packagr/commit/2c6160f3d54e112bd8d465015ff24fe4b4db7530)), closes [#1607](https://github.com/ng-packagr/ng-packagr/issues/1607)
+* update to APF version 10 ([d47ccd7](https://github.com/ng-packagr/ng-packagr/commit/d47ccd7fb1763af052d068ea84edc79981bd0c94))
+
+
+### Bug Fixes
+
+* update commander to version ^5.0.0 ([0ec80b5](https://github.com/ng-packagr/ng-packagr/commit/0ec80b56582112bcc851c35391acba283e2fb6dc))
+* update rollup to version 2.8.0 ([e7aa579](https://github.com/ng-packagr/ng-packagr/commit/e7aa579c94d66c8fa67fd1b40c86053bb3891841))
+* update rollup-plugin-sourcemaps to version ^0.6.0 ([f8c3459](https://github.com/ng-packagr/ng-packagr/commit/f8c3459af0a5d2125343ec0e737bcb7cc6b0c460))
+
+
+* remove deprecated jsx and languageLevel options ([7503bd4](https://github.com/ng-packagr/ng-packagr/commit/7503bd4a30f8218896a8ec502f42ac810cc4dd64))
+
+### [9.1.2](https://github.com/ng-packagr/ng-packagr/compare/v9.1.1...v9.1.2) (2020-04-30)
+
+
+### Bug Fixes
+
+* update rollup to version 2.7.5 ([0736ba9](https://github.com/ng-packagr/ng-packagr/commit/0736ba9))
+
+### [9.1.1](https://github.com/ng-packagr/ng-packagr/compare/v9.1.0...v9.1.1) (2020-04-13)
+
+
+### Bug Fixes
+
+* update chalk to version ^4.0.0 ([bbad22e](https://github.com/ng-packagr/ng-packagr/commit/bbad22e))
+* update rollup to version 2.3.1 ([dffe028](https://github.com/ng-packagr/ng-packagr/commit/dffe028))
+* update rollup to version 2.3.2 ([1ddc07b](https://github.com/ng-packagr/ng-packagr/commit/1ddc07b))
+* update rollup to version 2.3.4 ([4d056b1](https://github.com/ng-packagr/ng-packagr/commit/4d056b1))
+* update rollup to version 2.3.5 ([0c0672d](https://github.com/ng-packagr/ng-packagr/commit/0c0672d))
+* update rollup to version 2.6.1 ([4a95ddc](https://github.com/ng-packagr/ng-packagr/commit/4a95ddc))
+
 ## [9.1.0](https://github.com/ng-packagr/ng-packagr/compare/v9.0.3...v9.1.0) (2020-03-25)
 
 

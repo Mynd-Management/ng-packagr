@@ -1,7 +1,6 @@
 import * as ng from '@angular/compiler-cli';
 import * as ts from 'typescript';
 import * as log from '../utils/log';
-import { redirectWriteFileCompilerHost } from '../ts/redirect-write-file-compiler-host';
 import { cacheCompilerHost } from '../ts/cache-compiler-host';
 import { StylesheetProcessor } from '../styles/stylesheet-processor';
 import { BuildGraph } from '../graph/build-graph';
@@ -9,7 +8,6 @@ import { EntryPointNode, isEntryPointInProgress } from '../ng-package/nodes';
 import { NgccProcessor } from './ngcc-processor';
 import { ngccTransformCompilerHost } from '../ts/ngcc-transform-compiler-host';
 import { createEmitCallback } from './create-emit-callback';
-import { downlevelConstructorParameters } from '../ts/ctor-parameters';
 
 export async function compileSourceFiles(
   graph: BuildGraph,
@@ -17,13 +15,12 @@ export async function compileSourceFiles(
   moduleResolutionCache: ts.ModuleResolutionCache,
   stylesheetProcessor: StylesheetProcessor,
   extraOptions?: Partial<ng.CompilerOptions>,
-  declarationDir?: string,
   ngccProcessor?: NgccProcessor,
 ) {
   log.debug(`ngc (v${ng.VERSION.full})`);
 
   const tsConfigOptions: ng.CompilerOptions = { ...tsConfig.options, ...extraOptions };
-  const entryPoint = graph.find(isEntryPointInProgress()) as EntryPointNode;
+  const entryPoint: EntryPointNode = graph.find(isEntryPointInProgress());
 
   let tsCompilerHost = cacheCompilerHost(
     graph,
@@ -32,9 +29,6 @@ export async function compileSourceFiles(
     moduleResolutionCache,
     stylesheetProcessor,
   );
-  if (declarationDir) {
-    tsCompilerHost = redirectWriteFileCompilerHost(tsCompilerHost, tsConfigOptions.basePath, declarationDir);
-  }
 
   if (tsConfigOptions.enableIvy && ngccProcessor) {
     tsCompilerHost = ngccTransformCompilerHost(tsCompilerHost, tsConfigOptions, ngccProcessor, moduleResolutionCache);
@@ -48,7 +42,7 @@ export async function compileSourceFiles(
 
   const scriptTarget = tsConfigOptions.target;
   const cache = entryPoint.cache;
-  const oldProgram = cache.oldPrograms && (cache.oldPrograms[scriptTarget] as ng.Program | undefined);
+  const oldProgram = (cache.oldPrograms && cache.oldPrograms[scriptTarget]) as ng.Program | undefined;
 
   const ngProgram = ng.createProgram({
     rootNames: tsConfig.rootNames,
@@ -59,9 +53,11 @@ export async function compileSourceFiles(
 
   await ngProgram.loadNgStructureAsync();
 
+  // TS 4.1+ stores the reuse state in the new program
+  const checkReuseProgram = (ts.versionMajorMinor as string) === '4.0' ? oldProgram : ngProgram;
   log.debug(
     `ngc program structure is reused: ${
-      oldProgram ? (oldProgram.getTsProgram() as any).structureIsReused : 'No old program'
+      checkReuseProgram ? (checkReuseProgram.getTsProgram() as any).structureIsReused : 'No old program'
     }`,
   );
 
@@ -76,11 +72,6 @@ export async function compileSourceFiles(
     ...ngProgram.getNgStructuralDiagnostics(),
   ];
 
-  const beforeTs: ts.TransformerFactory<ts.SourceFile>[] = [];
-  if (!tsConfigOptions.annotateForClosureCompiler) {
-    beforeTs.push(downlevelConstructorParameters(() => ngProgram.getTsProgram().getTypeChecker()));
-  }
-
   // if we have an error we don't want to transpile.
   const hasError = ng.exitCodeFromResult(allDiagnostics) > 0;
   if (!hasError) {
@@ -90,9 +81,6 @@ export async function compileSourceFiles(
       emitFlags,
       // For Ivy we don't need a custom emitCallback to have tsickle transforms
       emitCallback: tsConfigOptions.enableIvy ? undefined : createEmitCallback(tsConfigOptions),
-      customTransformers: {
-        beforeTs,
-      },
     });
 
     allDiagnostics.push(...diagnostics);

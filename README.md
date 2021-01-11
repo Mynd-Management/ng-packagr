@@ -1,6 +1,6 @@
 # ng-packagr
 
-> Transpile your libraries to Angular Package Format
+> Compile and package Angular libraries in Angular Package Format (APF)
 
 
 [![npm](https://img.shields.io/npm/v/ng-packagr.svg?style=flat-square)](https://www.npmjs.com/package/ng-packagr)
@@ -77,7 +77,7 @@ Create one `package.json` per npm package, run _ng-packagr_ for each!
 ## Features
 
 * :gift: Implements [Angular Package Format](https://docs.google.com/document/d/1CZC2rcpxffTDfRDs6p1cfbmKNLA6x5O-NtkJglDaBVs/preview)
-  * :checkered_flag: Bundles your library in FESM2015, FESM5, and UMD formats
+  * :checkered_flag: Bundles your library in FESM2015 and UMD formats
   * :school_satchel: npm package can be consumed by [Angular CLI](https://github.com/angular/angular-cli), [Webpack](https://github.com/webpack/webpack), or [SystemJS](https://github.com/systemjs/systemjs)
   * :dancer: Creates type definitions (`.d.ts`)
   * :runner: Generates [Ahead-of-Time](https://angular.io/guide/aot-compiler#why-do-aot-compilation) metadata (`.metadata.json`)
@@ -99,9 +99,7 @@ Create one `package.json` per npm package, run _ng-packagr_ for each!
 - [Change Configuration Locations](docs/configuration-locations.md)
 - [Override tsconfig](docs/override-tsconfig.md)
 - [Add Style Include Paths](docs/style-include-paths.md)
-- [Change ECMAScript Language Level](docs/language-level.md)
 - [Package Secondary Entrypoints (sub packages)](docs/secondary-entrypoints.md)
-- [Enable JSX Templates, Bridging the Gap Between Angular and React](docs/jsx.md)
 
 ## Advanced Use Cases
 
@@ -130,7 +128,7 @@ To orchestrate the different tools, ng-packagr features a [custom transformation
 
 ## Knowledge
 
-[Angular Package Format v9.0](https://docs.google.com/document/d/1CZC2rcpxffTDfRDs6p1cfbmKNLA6x5O-NtkJglDaBVs/preview), design document at Google Docs
+[Angular Package Format v10.0](https://docs.google.com/document/d/1CZC2rcpxffTDfRDs6p1cfbmKNLA6x5O-NtkJglDaBVs/preview), design document at Google Docs
 
 Packaging Angular Libraries - Jason Aden at Angular Mountain View Meetup ([Jan 2018, 45min talk](https://www.youtube.com/watch?v=QfvwQEJVOig&t=3612s))
 

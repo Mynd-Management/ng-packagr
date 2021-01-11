@@ -1,10 +1,13 @@
 import * as ts from 'typescript';
+import { RollupCache } from 'rollup';
 import { ParsedConfiguration, Program } from '@angular/compiler-cli';
 import { Node } from '../graph/node';
 import { by, isInProgress, isDirty } from '../graph/select';
 import { NgEntryPoint, DestinationFiles } from './entry-point/entry-point';
+import { NgccProcessingCache } from './ngcc-cache';
 import { NgPackage } from './package';
 import { FileCache } from '../file-system/file-cache';
+import { ComplexPredicate } from '../graph/build-graph';
 
 export const TYPE_NG_PACKAGE = 'application/ng-package';
 export const TYPE_NG_ENTRY_POINT = 'application/ng-entry-point';
@@ -25,15 +28,15 @@ export function isPackage(node: Node): node is PackageNode {
   return node.type === TYPE_NG_PACKAGE;
 }
 
-export function byEntryPoint() {
+export function byEntryPoint(): ComplexPredicate<EntryPointNode> {
   return by(isEntryPoint);
 }
 
-export function isEntryPointInProgress() {
+export function isEntryPointInProgress(): ComplexPredicate<EntryPointNode> {
   return by(isEntryPoint).and(isInProgress);
 }
 
-export function isEntryPointDirty() {
+export function isEntryPointDirty(): ComplexPredicate<EntryPointNode> {
   return by(isEntryPoint).and(isDirty);
 }
 
@@ -58,23 +61,30 @@ export function ngUrl(path: string): string {
 export class EntryPointNode extends Node {
   readonly type = TYPE_NG_ENTRY_POINT;
 
-  constructor(public readonly url: string, readonly sourcesFileCache?: FileCache) {
+  constructor(
+    public readonly url: string,
+    sourcesFileCache: FileCache,
+    ngccProcessingCache: NgccProcessingCache,
+    moduleResolutionCache: ts.ModuleResolutionCache,
+  ) {
     super(url);
 
-    if (sourcesFileCache) {
-      this.cache.sourcesFileCache = sourcesFileCache;
-    }
+    this.cache = {
+      sourcesFileCache,
+      ngccProcessingCache,
+      analysesSourcesFileCache: new FileCache(),
+      moduleResolutionCache,
+    };
   }
 
   cache: {
     oldPrograms?: Record<ts.ScriptTarget | 'analysis', Program | ts.Program>;
     sourcesFileCache: FileCache;
+    ngccProcessingCache: NgccProcessingCache;
     analysesSourcesFileCache: FileCache;
     moduleResolutionCache: ts.ModuleResolutionCache;
-  } = {
-    sourcesFileCache: new FileCache(),
-    analysesSourcesFileCache: new FileCache(),
-    moduleResolutionCache: ts.createModuleResolutionCache(process.cwd(), s => s),
+    rollupFESMCache?: RollupCache;
+    rollupUMDCache?: RollupCache;
   };
 
   data: {
@@ -91,5 +101,7 @@ export class PackageNode extends Node {
   cache = {
     globCache: {} as GlobCache,
     sourcesFileCache: new FileCache(),
+    ngccProcessingCache: new NgccProcessingCache(),
+    moduleResolutionCache: ts.createModuleResolutionCache(process.cwd(), s => s),
   };
 }

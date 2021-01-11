@@ -1,30 +1,27 @@
-import { Logger, PathMappings, process as mainNgcc, LogLevel } from '@angular/compiler-cli/ngcc';
+import { Logger, process as mainNgcc, LogLevel } from '@angular/compiler-cli/ngcc';
 import { existsSync, constants, accessSync } from 'fs';
 import * as path from 'path';
 import * as ts from 'typescript';
+import { NgccProcessingCache } from '../ng-package/ngcc-cache';
 import * as log from '../utils/log';
 import { EntryPointNode, ngUrl } from '../ng-package/nodes';
 
 // Transform a package and its typings when NGTSC is resolving a module.
 export class NgccProcessor {
-  private _processedModules = new Set<string>();
   private _logger: NgccLogger;
   private _nodeModulesDirectory: string;
-  private _pathMappings: PathMappings | undefined;
   private _entryPointsUrl: string[];
 
-  constructor(private readonly compilerOptions: ts.CompilerOptions, private readonly entryPoints: EntryPointNode[]) {
+  constructor(
+    private readonly ngccProcessingCache: NgccProcessingCache,
+    private readonly projectPath: string,
+    private readonly compilerOptions: ts.CompilerOptions,
+    private readonly entryPoints: EntryPointNode[],
+  ) {
     this._entryPointsUrl = this.entryPoints.map(({ url }) => ngUrl(url));
 
-    const { baseUrl, paths } = this.compilerOptions;
+    const { baseUrl } = this.compilerOptions;
     this._nodeModulesDirectory = this.findNodeModulesDirectory(baseUrl);
-
-    if (baseUrl && paths) {
-      this._pathMappings = {
-        baseUrl,
-        paths,
-      };
-    }
   }
 
   processModule(moduleName: string, resolvedModule: ts.ResolvedModule | ts.ResolvedTypeReferenceDirective): void {
@@ -32,7 +29,7 @@ export class NgccProcessor {
     if (
       !resolvedFileName ||
       moduleName.startsWith('.') ||
-      this._processedModules.has(moduleName) ||
+      this.ngccProcessingCache.hasProcessed(moduleName) ||
       this._entryPointsUrl.includes(ngUrl(moduleName))
     ) {
       // Skip when module is unknown, relative, an entrypoint or already processed.
@@ -42,7 +39,7 @@ export class NgccProcessor {
     const packageJsonPath = this.tryResolvePackage(moduleName, resolvedFileName);
     if (!packageJsonPath) {
       // add it to processed so the second time round we skip this.
-      this._processedModules.add(moduleName);
+      this.ngccProcessingCache.markProcessed(moduleName);
 
       return;
     }
@@ -53,7 +50,7 @@ export class NgccProcessor {
       accessSync(packageJsonPath, constants.W_OK);
     } catch {
       // add it to processed so the second time round we skip this.
-      this._processedModules.add(moduleName);
+      this.ngccProcessingCache.markProcessed(moduleName);
 
       return;
     }
@@ -65,10 +62,10 @@ export class NgccProcessor {
       propertiesToConsider: ['es2015', 'browser', 'module', 'main'],
       createNewEntryPointFormats: true,
       logger: this._logger,
-      pathMappings: this._pathMappings,
+      tsConfigPath: this.projectPath,
     });
 
-    this._processedModules.add(moduleName);
+    this.ngccProcessingCache.markProcessed(moduleName);
   }
 
   /**

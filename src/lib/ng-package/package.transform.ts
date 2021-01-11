@@ -1,4 +1,5 @@
 import * as path from 'path';
+import * as fs from 'fs-extra';
 import { Observable, of as observableOf, pipe, NEVER, from } from 'rxjs';
 import {
   concatMap,
@@ -34,7 +35,6 @@ import { discoverPackages } from './discover-packages';
 import { createFileWatch } from '../file-system/file-watcher';
 import { NgPackagrOptions } from './options.di';
 import { flatten } from '../utils/array';
-import { copyFile } from '../utils/copy';
 import { ensureUnixPath } from '../utils/path';
 import { FileCache } from '../file-system/file-cache';
 
@@ -93,10 +93,20 @@ export const packageTransformFactory = (
     ),
     // Add entry points to graph
     map(graph => {
-      const ngPkg = graph.get(pkgUri) as PackageNode;
+      const foundNode = graph.get(pkgUri);
+      if (!isPackage(foundNode)) {
+        return graph;
+      }
+
+      const ngPkg: PackageNode = foundNode;
       const entryPoints = [ngPkg.data.primary, ...ngPkg.data.secondaries].map(entryPoint => {
         const { destinationFiles, moduleId } = entryPoint;
-        const node = new EntryPointNode(ngUrl(moduleId), ngPkg.cache.sourcesFileCache);
+        const node = new EntryPointNode(
+          ngUrl(moduleId),
+          ngPkg.cache.sourcesFileCache,
+          ngPkg.cache.ngccProcessingCache,
+          ngPkg.cache.moduleResolutionCache,
+        );
         node.data = { entryPoint, destinationFiles };
         node.state = 'dirty';
         ngPkg.dependsOn(node);
@@ -125,12 +135,14 @@ const watchTransformFactory = (
 
   return source$.pipe(
     switchMap(graph => {
-      const { data, cache } = graph.find(isPackage) as PackageNode;
+      const { data, cache } = graph.find(isPackage);
       return createFileWatch(data.src, [data.dest]).pipe(
         tap(fileChange => {
           const { filePath, event } = fileChange;
-          const { sourcesFileCache } = cache;
+          const { sourcesFileCache, ngccProcessingCache } = cache;
           const cachedSourceFile = sourcesFileCache.get(filePath);
+
+          ngccProcessingCache.clear();
 
           if (!cachedSourceFile) {
             if (event === 'unlink' || event === 'add') {
@@ -142,27 +154,35 @@ const watchTransformFactory = (
           const { declarationFileName } = cachedSourceFile;
 
           const uriToClean = [filePath, declarationFileName].map(x => fileUrl(ensureUnixPath(x)));
-          let nodesToClean = graph.filter(node => uriToClean.some(uri => uri === node.url));
+          const nodesToClean = graph.filter(node => uriToClean.some(uri => uri === node.url));
 
-          nodesToClean = flatten([
-            ...nodesToClean,
-            // if a non ts file changes we need to clean up it's direct dependees
-            // this is mainly done for resources such as html and css
-            ...nodesToClean.filter(x => !x.url.endsWith('.ts')).map(x => x.dependees),
-          ]);
+          const allUrlsToClean = new Set<string>(
+            flatten([
+              ...nodesToClean.map(node => node.url),
+              // if a non ts file changes we need to clean up its direct dependees
+              // this is mainly done for resources such as html and css
+              ...nodesToClean
+                .filter(node => !node.url.endsWith('.ts'))
+                .map(node => node.dependees.map(dependee => dependee.url)),
+            ]),
+          );
 
           // delete node that changes
-          nodesToClean.forEach(node => {
-            sourcesFileCache.delete(fileUrlPath(node.url));
+          allUrlsToClean.forEach(url => {
+            sourcesFileCache.delete(fileUrlPath(url));
           });
 
-          const entryPoints = graph.filter(isEntryPoint) as EntryPointNode[];
+          const entryPoints: EntryPointNode[] = graph.filter(isEntryPoint);
           entryPoints.forEach(entryPoint => {
-            const isDirty = entryPoint.dependents.some(x => nodesToClean.some(node => node.url === x.url));
+            const isDirty = entryPoint.dependents.some(dependent => allUrlsToClean.has(dependent.url));
             if (isDirty) {
               entryPoint.state = 'dirty';
               const { metadata } = entryPoint.data.destinationFiles;
               sourcesFileCache.delete(metadata);
+
+              uriToClean.forEach(url => {
+                entryPoint.cache.analysesSourcesFileCache.delete(fileUrlPath(url));
+              });
             }
           });
 
@@ -218,9 +238,9 @@ const writeNpmPackage = (pkgUri: string): Transform =>
     switchMap(graph => {
       const { data } = graph.get(pkgUri);
       const filesToCopy = Promise.all(
-        [`${data.src}/LICENSE`, `${data.src}/README.md`, `${data.src}/CHANGELOG.md`].map(src =>
-          copyFile(src, path.join(data.dest, path.basename(src)), { dereference: true }),
-        ),
+        [`${data.src}/LICENSE`, `${data.src}/README.md`, `${data.src}/CHANGELOG.md`]
+          .filter(f => fs.existsSync(f))
+          .map(src => fs.copy(src, path.join(data.dest, path.basename(src)), { dereference: true, overwrite: true })),
       );
 
       return from(filesToCopy).pipe(map(() => graph));
@@ -232,7 +252,7 @@ const scheduleEntryPoints = (epTransform: Transform): Transform =>
     concatMap(graph => {
       // Calculate node/dependency depth and determine build order
       const depthBuilder = new DepthBuilder();
-      const entryPoints = graph.filter(isEntryPoint);
+      const entryPoints: EntryPointNode[] = graph.filter(isEntryPoint);
       entryPoints.forEach(entryPoint => {
         const deps = entryPoint.filter(isEntryPoint).map(ep => ep.url);
         depthBuilder.add(entryPoint.url, deps);
@@ -243,8 +263,8 @@ const scheduleEntryPoints = (epTransform: Transform): Transform =>
 
       // Build entry points with lower depth values first.
       return from(flatten(groups)).pipe(
-        map(epUrl => graph.find(byEntryPoint().and(ep => ep.url === epUrl)) as EntryPointNode),
-        filter(entryPoint => entryPoint.state !== 'done'),
+        map((epUrl: string): EntryPointNode => graph.find(byEntryPoint().and(ep => ep.url === epUrl))),
+        filter((entryPoint: EntryPointNode): boolean => entryPoint.state !== 'done'),
         concatMap(ep =>
           observableOf(ep).pipe(
             // Mark the entry point as 'in-progress'

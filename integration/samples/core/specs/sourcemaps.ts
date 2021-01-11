@@ -3,10 +3,10 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 
 describe(`@sample/core`, () => {
-  describe(`fesm5/sample-core.js.map`, () => {
+  describe(`fesm2015/sample-core.js.map`, () => {
     let sourceMap;
     before(() => {
-      sourceMap = fs.readJsonSync(path.resolve(__dirname, '../dist/fesm5/sample-core.js.map'));
+      sourceMap = fs.readJsonSync(path.resolve(__dirname, '../dist/fesm2015/sample-core.js.map'));
     });
 
     it(`should exist`, () => {
@@ -19,11 +19,8 @@ describe(`@sample/core`, () => {
       expect(sourceMap.sources).to.have.lengthOf(sourceMap.sourcesContent.length);
     });
 
-    it(`should reference each 'sources' path with a common prefix`, () => {
-      const everyUeveryMe = (sourceMap.sources as string[]).every(
-        fileName => fileName.startsWith('ng://@sample/core') && fileName.endsWith('.ts'),
-      );
-      expect(everyUeveryMe).to.be.true;
+    it('should point to the correct source path', () => {
+      expect(sourceMap.sources[0]).to.equal('../../src/angular.component.ts');
     });
   });
 
@@ -45,13 +42,6 @@ describe(`@sample/core`, () => {
       expect(sourceMap.sources).to.be.an('array').that.is.not.empty;
       expect(sourceMap.sourcesContent).to.be.an('array').that.is.not.empty;
       expect(sourceMap.sources).to.have.lengthOf(sourceMap.sourcesContent.length);
-    });
-
-    it(`should reference each 'sources' path with a common prefix`, () => {
-      const sourceMapPaths = (sourceMap.sources as string[])
-        .filter(fileName => fileName !== 'null' && !fileName.includes('node_modules'))
-        .every(fileName => fileName.startsWith('ng://@sample/core') && fileName.endsWith('.ts'));
-      expect(sourceMapPaths).to.be.true;
     });
   });
 });

@@ -19,7 +19,6 @@ describe('intra-dependent', () => {
 
   it("should perform initial compilation when 'watch' is started", () => {
     harness.expectDtsToMatch('src/primary.component', /count: number/);
-    harness.expectFesm5ToMatch('intra-dependent-secondary', /count = 100/);
     harness.expectFesm2015ToMatch('intra-dependent-secondary', /count = 100/);
   });
 
@@ -44,9 +43,9 @@ describe('intra-dependent', () => {
   });
 
   it('should only build entrypoints that are dependent on the file changed.', done => {
-    const primaryFesmPath = harness.getFilePath('fesm5/intra-dependent.js');
-    const secondaryFesmPath = harness.getFilePath('fesm5/intra-dependent-secondary.js');
-    const thirdFesmPath = harness.getFilePath('fesm5/intra-dependent-third.js');
+    const primaryFesmPath = harness.getFilePath('fesm2015/intra-dependent.js');
+    const secondaryFesmPath = harness.getFilePath('fesm2015/intra-dependent-secondary.js');
+    const thirdFesmPath = harness.getFilePath('fesm2015/intra-dependent-third.js');
 
     const primaryModifiedTime = fs.statSync(primaryFesmPath).mtimeMs;
     const secondaryModifiedTime = fs.statSync(secondaryFesmPath).mtimeMs;
@@ -57,6 +56,15 @@ describe('intra-dependent', () => {
       expect(fs.statSync(primaryFesmPath).mtimeMs).to.greaterThan(primaryModifiedTime);
       expect(fs.statSync(secondaryFesmPath).mtimeMs).to.greaterThan(secondaryModifiedTime);
       expect(fs.statSync(thirdFesmPath).mtimeMs).to.equals(thirdModifiedTime);
+      done();
+    });
+  });
+
+  it('should fail when introducing a circular import.', done => {
+    harness.copyTestCase('circular');
+
+    harness.onFailure(error => {
+      expect(error.message).to.contain('Entry point intra-dependent has a circular dependency on itself.');
       done();
     });
   });
