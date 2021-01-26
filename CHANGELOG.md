@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [11.1.2](https://github.com/ng-packagr/ng-packagr/compare/v11.1.1...v11.1.2) (2021-01-20)
+
+### [11.1.1](https://github.com/ng-packagr/ng-packagr/compare/v11.1.0...v11.1.1) (2021-01-20)
+
+
+### Bug Fixes
+
+* await async process method ([361e43b](https://github.com/ng-packagr/ng-packagr/commit/361e43ba773021ef1b63525a67011c4e514a8ea8))
+
+## [11.1.0](https://github.com/ng-packagr/ng-packagr/compare/v11.0.3...v11.1.0) (2021-01-20)
+
+
+### Features
+
+* add NGCC async integration ([232fb21](https://github.com/ng-packagr/ng-packagr/commit/232fb213d572294c5ea94280bd43e432e6d0995c))
+* add stylesheet processor DI ([dedb3b3](https://github.com/ng-packagr/ng-packagr/commit/dedb3b3de41c16e85fde6e39626a858bb6d473c1))
+* add support for using TypeScript 4.1 ([ffe3ab9](https://github.com/ng-packagr/ng-packagr/commit/ffe3ab935f83155cb7f5d0822902573ce96cdbe5))
+
+### Bug Fixes
+
+* add tsickle as optional peer dependency ([52f3988](https://github.com/ng-packagr/ng-packagr/commit/52f398887abb91db3901088a9f76e3911e88e5c6)), closes [#1801](https://github.com/ng-packagr/ng-packagr/issues/1801)
+* changed assets not being copied during watch mode ([8d6664e](https://github.com/ng-packagr/ng-packagr/commit/8d6664e782bab40bfadd555dcdd9ef011b0104d6)), closes [#1826](https://github.com/ng-packagr/ng-packagr/issues/1826)
+* set sourceRoot to empty string to correctly resolve dts sources ([94dd2d8](https://github.com/ng-packagr/ng-packagr/commit/94dd2d8881bc06696fbe8e6b67f9f8a8e761fa96))
+* termination of process when using CTRL+C ([8f6c46e](https://github.com/ng-packagr/ng-packagr/commit/8f6c46ef4a8d418c37778b687f8f6bbb2d73f876))
+
+### Performance
+
+* only use ensureUnixPath when OS is Windows ([d4ed2b4](https://github.com/ng-packagr/ng-packagr/commit/d4ed2b44d3a7e3264e50c9e6786bb6b0c8197b39))
+
 ### [11.0.3](https://github.com/ng-packagr/ng-packagr/compare/v11.0.2...v11.0.3) (2020-11-21)
 
 

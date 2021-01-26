@@ -1,5 +1,4 @@
 import * as path from 'path';
-import * as fs from 'fs-extra';
 import { Observable, of as observableOf, pipe, NEVER, from } from 'rxjs';
 import {
   concatMap,
@@ -19,7 +18,7 @@ import { DepthBuilder } from '../graph/depth';
 import { STATE_IN_PROGESS } from '../graph/node';
 import { Transform } from '../graph/transform';
 import * as log from '../utils/log';
-import { rimraf } from '../utils/rimraf';
+import { copyFile, exists, rimraf } from '../utils/fs';
 import {
   PackageNode,
   EntryPointNode,
@@ -141,6 +140,9 @@ const watchTransformFactory = (
           const { filePath, event } = fileChange;
           const { sourcesFileCache, ngccProcessingCache } = cache;
           const cachedSourceFile = sourcesFileCache.get(filePath);
+          const { declarationFileName } = cachedSourceFile || {};
+          const uriToClean = [filePath, declarationFileName].map(x => fileUrl(ensureUnixPath(x)));
+          const nodesToClean = graph.filter(node => uriToClean.some(uri => uri === node.url));
 
           ngccProcessingCache.clear();
 
@@ -148,13 +150,11 @@ const watchTransformFactory = (
             if (event === 'unlink' || event === 'add') {
               cache.globCache = regenerateGlobCache(sourcesFileCache);
             }
-            return;
+
+            if (!nodesToClean) {
+              return;
+            }
           }
-
-          const { declarationFileName } = cachedSourceFile;
-
-          const uriToClean = [filePath, declarationFileName].map(x => fileUrl(ensureUnixPath(x)));
-          const nodesToClean = graph.filter(node => uriToClean.some(uri => uri === node.url));
 
           const allUrlsToClean = new Set<string>(
             flatten([
@@ -235,15 +235,17 @@ const buildTransformFactory = (project: string, analyseSourcesTransform: Transfo
 
 const writeNpmPackage = (pkgUri: string): Transform =>
   pipe(
-    switchMap(graph => {
+    switchMap(async graph => {
       const { data } = graph.get(pkgUri);
-      const filesToCopy = Promise.all(
-        [`${data.src}/LICENSE`, `${data.src}/README.md`, `${data.src}/CHANGELOG.md`]
-          .filter(f => fs.existsSync(f))
-          .map(src => fs.copy(src, path.join(data.dest, path.basename(src)), { dereference: true, overwrite: true })),
-      );
+      const files = [`${data.src}/LICENSE`, `${data.src}/README.md`];
 
-      return from(filesToCopy).pipe(map(() => graph));
+      for (const src of files) {
+        if (await exists(src)) {
+          await copyFile(src, path.join(data.dest, path.basename(src)));
+        }
+      }
+
+      return graph;
     }),
   );
 
