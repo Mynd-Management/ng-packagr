@@ -1,6 +1,6 @@
 {
   "name": "@matheo/ng-packagr",
-  "version": "11.1.2",
+  "version": "11.1.4",
   "description": "Compile and package Angular libraries in Angular Package Format (APF)",
   "keywords": [
     "apf",
@@ -56,14 +56,8 @@
   "peerDependencies": {
     "@angular/compiler": "^11.0.0",
     "@angular/compiler-cli": "^11.0.0",
-    "tsickle": "~0.39.0",
     "tslib": "^2.0.0",
     "typescript": ">=4.0 <4.2"
-  },
-  "peerDependenciesMeta": {
-    "tsickle": {
-      "optional": true
-    }
   },
   "devDependencies": {
     "@angular/cdk": "^11.0.0",
@@ -88,7 +82,6 @@
     "@types/rimraf": "^3.0.0",
     "@types/sinon": "^9.0.0",
     "@types/stylus": "^0.48.30",
-    "@types/uglify-js": "^3.0.2",
     "chai": "^4.0.1",
     "cross-env": "^7.0.0",
     "husky": "^4.0.0",
@@ -103,7 +96,6 @@
     "source-map": "^0.7.0",
     "standard-version": "^9.0.0",
     "ts-node": "^9.0.0",
-    "tsickle": "^0.39.0",
     "tslib": "^2.0.0",
     "typescript": "~4.1.2",
     "zone.js": "^0.11.0"

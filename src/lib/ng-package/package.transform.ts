@@ -15,10 +15,10 @@ import {
 } from 'rxjs/operators';
 import { BuildGraph } from '../graph/build-graph';
 import { DepthBuilder } from '../graph/depth';
-import { STATE_IN_PROGESS } from '../graph/node';
+import { STATE_IN_PROGRESS } from '../graph/node';
 import { Transform } from '../graph/transform';
 import * as log from '../utils/log';
-import { copyFile, exists, rimraf } from '../utils/fs';
+import { copyFile, rimraf, stat } from '../utils/fs';
 import {
   PackageNode,
   EntryPointNode,
@@ -237,11 +237,16 @@ const writeNpmPackage = (pkgUri: string): Transform =>
   pipe(
     switchMap(async graph => {
       const { data } = graph.get(pkgUri);
-      const files = [`${data.src}/LICENSE`, `${data.src}/README.md`];
+      const srcFiles = [`${data.src}/LICENSE`, `${data.src}/README.md`];
 
-      for (const src of files) {
-        if (await exists(src)) {
-          await copyFile(src, path.join(data.dest, path.basename(src)));
+      for (const srcFile of srcFiles) {
+        let isFile = false;
+        try {
+          isFile = (await stat(srcFile)).isFile();
+        } catch {}
+
+        if (isFile) {
+          await copyFile(srcFile, path.join(data.dest, path.basename(srcFile)));
         }
       }
 
@@ -270,7 +275,7 @@ const scheduleEntryPoints = (epTransform: Transform): Transform =>
         concatMap(ep =>
           observableOf(ep).pipe(
             // Mark the entry point as 'in-progress'
-            tap(entryPoint => (entryPoint.state = STATE_IN_PROGESS)),
+            tap(entryPoint => (entryPoint.state = STATE_IN_PROGRESS)),
             mapTo(graph),
             epTransform,
           ),
