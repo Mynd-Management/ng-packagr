@@ -129,12 +129,20 @@ export function cacheCompilerHost(
 
       const cache = sourcesFileCache.getOrCreate(fileName);
       if (cache.content === undefined) {
-        cache.content = compilerHost.readFile.call(this, fileName);
-        if (/(pug|jade)$/.test(path.extname(fileName))) {
+        if (/(html|htm|svg)$/.test(path.extname(fileName))) {
+          // template
+          cache.content = compilerHost.readFile.call(this, fileName);
+        } else if (/(pug|jade)$/.test(path.extname(fileName))) {
           cache.content = pugProcessor(fileName, cache.content);
-        } else if (!/(html|htm|svg)$/.test(path.extname(fileName))) {
-          cache.content = stylesheetProcessor.process(fileName, cache.content);
+        } else {
+          // stylesheet
+          cache.content = stylesheetProcessor.process(fileName);
         }
+
+        if (cache.content === undefined) {
+          throw new Error(`Cannot read file ${fileName}.`);
+        };
+
         cache.exists = true;
       }
 

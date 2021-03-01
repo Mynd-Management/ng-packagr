@@ -2,8 +2,7 @@
 
 import * as program from 'commander';
 import * as path from 'path';
-import * as readPkgUp from 'read-pkg-up';
-import { execute, build, version } from '../public_api';
+import { build, execute, version } from '../public_api';
 
 const DEFAULT_PROJECT_PATH = path.resolve(process.cwd(), 'ng-package.json');
 
@@ -28,11 +27,8 @@ program
     (value: string | undefined) => (value ? path.resolve(value) : undefined),
   );
 
-const dir = path.dirname(module.filename);
-const pkg = readPkgUp.sync({ cwd: dir }).pkg;
-
 program.on('option:version', () => {
-  version(pkg);
+  version();
   process.exit(0);
 });
 
